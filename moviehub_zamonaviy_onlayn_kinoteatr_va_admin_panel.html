@@ -1,0 +1,2508 @@
+<!DOCTYPE html>
+<html lang="uz" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MovieHub — Kino, Drama, Anime va Multfilmlar Platformasi</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Chart.js for Admin Analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Plus Jakarta Sans', 'sans-serif'],
+          },
+          colors: {
+            cosmic: {
+              900: '#0f0722',
+              800: '#1a0e38',
+              700: '#271752',
+            },
+            accent: {
+              coral: '#ff4b5c',
+              magenta: '#b83280',
+              violet: '#7928ca',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0e0720;
+      color: #ffffff;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* Animated Cosmic Nebula Background */
+    .cosmic-bg {
+      background: radial-gradient(circle at 15% 20%, rgba(168, 38, 130, 0.42) 0%, transparent 45%),
+                  radial-gradient(circle at 82% 18%, rgba(45, 118, 219, 0.35) 0%, transparent 48%),
+                  radial-gradient(circle at 55% 85%, rgba(114, 34, 189, 0.48) 0%, transparent 52%),
+                  linear-gradient(135deg, #100826 0%, #1d1042 48%, #13092b 100%);
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+    }
+
+    .nebula-orb {
+      position: fixed;
+      border-radius: 9999px;
+      filter: blur(90px);
+      z-index: -1;
+      opacity: 0.55;
+      pointer-events: none;
+      animation: floatOrb 16s ease-in-out infinite alternate;
+    }
+
+    @keyframes floatOrb {
+      0% { transform: translate(0px, 0px) scale(1); }
+      100% { transform: translate(30px, -25px) scale(1.08); }
+    }
+
+    /* Glass Surfaces */
+    .glass-shell {
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.11) 0%, rgba(255, 255, 255, 0.04) 100%);
+      backdrop-filter: blur(26px);
+      -webkit-backdrop-filter: blur(26px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: 0 24px 60px rgba(6, 2, 20, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+    }
+
+    .glass-panel {
+      background: linear-gradient(160deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0.03) 100%);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    .glass-pill-bar {
+      background: rgba(18, 12, 38, 0.42);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    /* Vibrant Coral-to-Purple Gradient Button & Active Pill */
+    .btn-coral-gradient {
+      background: linear-gradient(135deg, #e13654 0%, #9b2c7c 55%, #5b2c83 100%);
+      box-shadow: 0 8px 24px rgba(225, 54, 84, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+      border: 1px solid rgba(255, 130, 150, 0.35);
+      transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .btn-coral-gradient:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 28px rgba(225, 54, 84, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+      filter: brightness(1.08);
+    }
+
+    .btn-glass {
+      background: rgba(255, 255, 255, 0.11);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.22s ease;
+    }
+
+    .btn-glass:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.35);
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.03);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.22);
+      border-radius: 999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(225, 54, 84, 0.65);
+    }
+
+    /* Card Hover Glow */
+    .media-card {
+      transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.32s ease;
+    }
+    .media-card:hover {
+      transform: translateY(-5px) scale(1.015);
+      box-shadow: 0 18px 36px rgba(0, 0, 0, 0.5), 0 0 22px rgba(225, 54, 84, 0.28);
+    }
+
+    .fade-in {
+      animation: fadeIn 0.35s ease forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-pink-500 selection:text-white">
+
+  <!-- Cosmic Ambient Background -->
+  <div class="cosmic-bg"></div>
+  <div class="nebula-orb w-96 h-96 bg-fuchsia-600/40 top-[-60px] left-[8%]"></div>
+  <div class="nebula-orb w-[460px] h-[460px] bg-indigo-500/30 bottom-[-80px] right-[10%]" style="animation-delay: -5s;"></div>
+  <div class="nebula-orb w-72 h-72 bg-rose-500/30 top-[42%] left-[45%]" style="animation-delay: -9s;"></div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-[110] flex flex-col gap-2.5 pointer-events-none"></div>
+
+  <!-- Main Application Shell -->
+  <div class="min-h-screen w-full max-w-[1580px] mx-auto px-3 sm:px-6 py-4 sm:py-6 flex flex-col lg:flex-row items-stretch gap-4 lg:gap-5">
+
+    <!-- LEFT FLOATING SLIM GLASS RAIL -->
+    <aside class="glass-shell rounded-full lg:rounded-[38px] px-4 py-2.5 lg:py-6 lg:px-2.5 flex lg:flex-col items-center justify-between lg:justify-center gap-3 sm:gap-5 shrink-0 z-30">
+      <!-- Mobile Brand Mini -->
+      <div class="flex lg:hidden items-center gap-2">
+        <div class="w-8 h-8 rounded-xl btn-coral-gradient flex items-center justify-center shadow-lg">
+          <i data-lucide="clapperboard" class="w-4 h-4 text-white"></i>
+        </div>
+        <span class="font-display font-bold text-sm tracking-tight">MovieHub</span>
+      </div>
+
+      <!-- Navigation Rail Icons -->
+      <nav class="flex lg:flex-col items-center gap-2.5 sm:gap-4" aria-label="Asosiy navigatsiya">
+        <button onclick="switchMainView('home')" id="nav-home" title="Bosh sahifa (Katalog)"
+          class="rail-btn w-11 h-11 rounded-full flex items-center justify-center btn-coral-gradient text-white transition-all">
+          <i data-lucide="layout-grid" class="w-5 h-5"></i>
+        </button>
+
+        <button onclick="openNotificationsModal()" id="nav-notif" title="Yangiliklar va E'lonlar"
+          class="rail-btn relative w-11 h-11 rounded-full flex items-center justify-center bg-white/5 hover:bg-white/15 border border-white/10 text-white/80 hover:text-white transition-all">
+          <i data-lucide="bell" class="w-5 h-5"></i>
+          <span id="rail-notif-dot" class="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-rose-500 ring-2 ring-[#1c103b]"></span>
+        </button>
+
+        <button onclick="switchMainView('schedule')" id="nav-schedule" title="Premyeralar jadvali"
+          class="rail-btn w-11 h-11 rounded-full flex items-center justify-center bg-white/5 hover:bg-white/15 border border-white/10 text-white/80 hover:text-white transition-all">
+          <i data-lucide="calendar-days" class="w-5 h-5"></i>
+        </button>
+
+        <button onclick="switchMainView('saved')" id="nav-saved" title="Saqlanganlar va Profil"
+          class="rail-btn w-11 h-11 rounded-full flex items-center justify-center bg-white/5 hover:bg-white/15 border border-white/10 text-white/80 hover:text-white transition-all">
+          <i data-lucide="user" class="w-5 h-5"></i>
+        </button>
+
+        <div class="hidden lg:block w-6 h-[1px] bg-white/15 my-1"></div>
+
+        <!-- ADMIN PANEL SWITCH BUTTON -->
+        <button onclick="requestAdminAccess()" id="nav-admin" title="Admin Panel (Analitika va Video Yuklash)"
+          class="rail-btn relative w-11 h-11 rounded-full flex items-center justify-center bg-amber-500/15 hover:bg-amber-500/30 border border-amber-400/35 text-amber-300 hover:text-white transition-all group">
+          <i data-lucide="shield-check" class="w-5 h-5"></i>
+          <span class="hidden xl:block absolute left-14 px-2.5 py-1 rounded-lg bg-[#160c30]/95 border border-white/15 text-[11px] font-medium text-amber-200 whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity shadow-xl">
+            Admin Panel
+          </span>
+        </button>
+      </nav>
+    </aside>
+
+    <!-- CENTER MAIN GLASS CONTAINER -->
+    <main class="glass-shell rounded-[32px] p-4 sm:p-6 lg:p-7 flex-1 flex flex-col min-w-0 relative overflow-hidden">
+
+      <!-- TOP HEADER BAR -->
+      <header class="flex flex-wrap items-center justify-between gap-4 mb-5">
+        <!-- MovieHub Logo -->
+        <div onclick="switchMainView('home'); setCategory('all')" class="flex items-center gap-2.5 cursor-pointer group">
+          <div class="relative w-10 h-10 rounded-2xl bg-gradient-to-tr from-rose-600 via-fuchsia-600 to-amber-400 p-[2px] shadow-lg group-hover:scale-105 transition-transform">
+            <div class="w-full h-full bg-[#190d36] rounded-[14px] flex items-center justify-center">
+              <i data-lucide="film" class="w-5 h-5 text-rose-400"></i>
+            </div>
+          </div>
+          <div class="flex flex-col">
+            <div class="flex items-center gap-2">
+              <span class="font-display font-extrabold text-xl tracking-tight bg-gradient-to-r from-white via-pink-100 to-amber-200 bg-clip-text text-transparent">
+                MovieHub
+              </span>
+              <!-- Live Cloud Status Indicator -->
+              <span id="cloud-status-badge" title="Umumiy bulutli baza holati"
+                class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-400/30 text-[10px] font-semibold text-emerald-300">
+                <span id="cloud-status-dot" class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span id="cloud-status-text">Cloud Live</span>
+              </span>
+            </div>
+            <span class="text-[10px] uppercase tracking-widest text-white/50 -mt-0.5">Ultra HD Umumiy Kinoteatr</span>
+          </div>
+        </div>
+
+        <!-- Category Navigation Pills -->
+        <div id="category-tabs-bar" class="glass-pill-bar rounded-full p-1.5 flex items-center gap-1 overflow-x-auto max-w-full">
+          <button onclick="setCategory('all')" data-cat="all"
+            class="cat-pill px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-semibold whitespace-nowrap transition-all btn-coral-gradient text-white">
+            Barchasi
+          </button>
+          <button onclick="setCategory('Kino')" data-cat="Kino"
+            class="cat-pill px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap text-white/75 hover:text-white transition-all">
+            Kino
+          </button>
+          <button onclick="setCategory('Drama')" data-cat="Drama"
+            class="cat-pill px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap text-white/75 hover:text-white transition-all">
+            Drama
+          </button>
+          <button onclick="setCategory('Anime')" data-cat="Anime"
+            class="cat-pill px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap text-white/75 hover:text-white transition-all">
+            Anime
+          </button>
+          <button onclick="setCategory('Multfilm')" data-cat="Multfilm"
+            class="cat-pill px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap text-white/75 hover:text-white transition-all">
+            Multfilm
+          </button>
+        </div>
+
+        <!-- Quick Admin / Mode Switch Badge -->
+        <div class="flex items-center gap-2">
+          <button onclick="toggleAdminQuick()" id="header-admin-btn"
+            class="btn-glass px-3.5 py-2 rounded-full text-xs font-semibold flex items-center gap-2 text-amber-200 hover:text-white">
+            <i data-lucide="shield" class="w-3.5 h-3.5 text-amber-400"></i>
+            <span id="header-admin-label">Admin Panel</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Live Announcement Banner (Synced across all users via Cloud) -->
+      <div id="site-announcement-bar" class="mb-4 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-rose-500/20 via-purple-500/20 to-indigo-500/20 border border-white/15 flex items-center justify-between gap-3 text-xs text-white/90">
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="px-2 py-0.5 rounded-full bg-rose-500 text-[10px] font-bold uppercase tracking-wider shrink-0">Jonli E'lon</span>
+          <span id="announcement-text" class="truncate">MovieHub 4K HDR serverlari ishga tushdi! Barcha yangi Anime, Drama va Kinolarni o‘zbek tilida tomosha qiling.</span>
+        </div>
+        <button onclick="document.getElementById('site-announcement-bar').classList.add('hidden')" class="text-white/50 hover:text-white shrink-0">
+          <i data-lucide="x" class="w-3.5 h-3.5"></i>
+        </button>
+      </div>
+
+      <!-- ========================================================= -->
+      <!-- VIEW 1: STREAMING HOME & CATALOG                          -->
+      <!-- ========================================================= -->
+      <div id="view-home" class="flex-1 flex flex-col gap-6 fade-in">
+
+        <!-- HERO FEATURED BANNER -->
+        <section id="hero-section" class="relative rounded-[26px] overflow-hidden min-h-[340px] sm:min-h-[395px] flex flex-col justify-between p-5 sm:p-8 border border-white/20 shadow-2xl group">
+          <img id="hero-backdrop" src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1600&q=85"
+               alt="Featured Movie"
+               onerror="this.src='https://placehold.co/1400x600/261447/ffffff?text=MovieHub+Premyera'"
+               class="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105" />
+
+          <div class="absolute inset-0 bg-gradient-to-r from-[#0e0624]/95 via-[#160b33]/72 to-transparent"></div>
+          <div class="absolute inset-0 bg-gradient-to-t from-[#0d0620] via-transparent to-black/25"></div>
+
+          <!-- Top Row -->
+          <div class="relative z-10 flex items-center justify-between gap-2">
+            <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-black/45 backdrop-blur-md border border-white/20 text-xs font-medium text-white">
+              <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+              <span id="hero-badge">Yangi Trend</span>
+            </span>
+
+            <div class="flex items-center gap-2 bg-black/40 backdrop-blur-md px-3 py-1 rounded-full border border-white/15 text-xs text-amber-300 font-semibold">
+              <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400 text-amber-400"></i>
+              <span id="hero-rating">9.5</span>
+              <span class="text-white/40">|</span>
+              <span id="hero-year" class="text-white/85">2026</span>
+            </div>
+          </div>
+
+          <!-- Bottom Content & Controls -->
+          <div class="relative z-10 mt-auto pt-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div class="max-w-xl space-y-3">
+              <div id="hero-genres" class="flex flex-wrap items-center gap-2">
+                <span class="px-3 py-1 rounded-full bg-white/15 backdrop-blur-md border border-white/15 text-xs font-medium">Fantastika</span>
+                <span class="px-3 py-1 rounded-full bg-white/15 backdrop-blur-md border border-white/15 text-xs font-medium">Sarguzasht</span>
+              </div>
+
+              <h1 id="hero-title" class="font-display font-extrabold text-3xl sm:text-4xl lg:text-[42px] leading-tight tracking-tight text-white drop-shadow">
+                Avatar: Olov va Kul
+              </h1>
+
+              <p id="hero-desc" class="text-xs sm:text-sm text-white/80 line-clamp-2 sm:line-clamp-3 leading-relaxed">
+                Pandora sayyorasining yangi vulqon hududlarida Jeyk Salli va Neytiri oilasi ilgari ko‘rilmagan xavfli qabila bilan to‘qnash keladi.
+              </p>
+
+              <!-- Action Buttons -->
+              <div class="pt-2 flex flex-wrap items-center gap-3">
+                <button id="hero-watch-btn" onclick="playHeroMedia()"
+                  class="btn-coral-gradient px-6 py-3 rounded-full text-sm font-semibold text-white flex items-center gap-2.5 cursor-pointer">
+                  <span class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
+                    <i data-lucide="play" class="w-3.5 h-3.5 fill-white text-white ml-0.5"></i>
+                  </span>
+                  Tomosha qilish
+                </button>
+
+                <button onclick="downloadHeroMedia()"
+                  class="btn-glass px-5 py-3 rounded-full text-sm font-medium text-white flex items-center gap-2 cursor-pointer">
+                  <i data-lucide="download" class="w-4 h-4 text-white/85"></i>
+                  Yuklab olish
+                </button>
+
+                <button onclick="bookmarkHeroMedia()" title="Saqlanganlarga qo'shish"
+                  class="btn-glass w-11 h-11 rounded-full flex items-center justify-center text-white cursor-pointer">
+                  <i data-lucide="bookmark" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Hero Slider Navigation Arrows & Dots -->
+            <div class="flex items-center gap-3 self-end">
+              <div id="hero-dots" class="flex items-center gap-1.5 mr-1"></div>
+              <button onclick="prevHeroSlide()" aria-label="Oldingi slayd"
+                class="w-10 h-10 rounded-full btn-glass flex items-center justify-center text-white hover:scale-105 transition-transform">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i>
+              </button>
+              <button onclick="nextHeroSlide()" aria-label="Keyingi slayd"
+                class="w-10 h-10 rounded-full btn-glass flex items-center justify-center text-white hover:scale-105 transition-transform">
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- "SIZGA YOQISHI MUMKIN" CATALOG GRID -->
+        <section class="glass-panel rounded-[26px] p-5 sm:p-6">
+          <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+            <div class="flex items-center gap-3">
+              <h2 id="catalog-section-title" class="font-display font-bold text-lg sm:text-xl text-white">
+                Sizga yoqishi mumkin
+              </h2>
+              <span id="catalog-count-badge" class="px-2.5 py-0.5 rounded-full bg-white/10 text-xs text-white/70 font-medium">
+                Yuklanmoqda...
+              </span>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <select id="sort-catalog-select" onchange="renderCatalog()"
+                class="bg-white/10 border border-white/15 rounded-full px-3.5 py-1.5 text-xs text-white/90 focus:outline-none focus:border-rose-400">
+                <option value="newest" class="bg-[#1b0f3a]">Eng yangilari</option>
+                <option value="rating" class="bg-[#1b0f3a]">Yuqori reyting</option>
+                <option value="views" class="bg-[#1b0f3a]">Ko‘p ko‘rilgan</option>
+              </select>
+              <button onclick="setCategory('all')" class="text-xs font-medium text-white/70 hover:text-rose-300 transition-colors">
+                Barchasi
+              </button>
+            </div>
+          </div>
+
+          <!-- Responsive Media Grid -->
+          <div id="media-grid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-5">
+            <!-- Skeleton Loader -->
+            <div class="h-[260px] rounded-[22px] bg-white/5 animate-pulse"></div>
+            <div class="h-[260px] rounded-[22px] bg-white/5 animate-pulse"></div>
+            <div class="h-[260px] rounded-[22px] bg-white/5 animate-pulse"></div>
+            <div class="h-[260px] rounded-[22px] bg-white/5 animate-pulse"></div>
+          </div>
+
+          <!-- Empty State -->
+          <div id="catalog-empty" class="hidden py-12 text-center space-y-3">
+            <div class="w-14 h-14 rounded-full bg-white/10 mx-auto flex items-center justify-center text-white/60">
+              <i data-lucide="search-x" class="w-7 h-7"></i>
+            </div>
+            <h3 class="font-semibold text-base">Hech narsa topilmadi</h3>
+            <p class="text-xs text-white/60 max-w-sm mx-auto">Qidiruv so‘zini o‘zgartiring yoki boshqa bo‘limni tanlang.</p>
+            <button onclick="resetFilters()" class="btn-coral-gradient px-4 py-2 rounded-full text-xs font-semibold">
+              Filtrlarni tozalash
+            </button>
+          </div>
+        </section>
+      </div>
+
+      <!-- ========================================================= -->
+      <!-- VIEW 2: PREMIERES SCHEDULE (TAQVIM)                       -->
+      <!-- ========================================================= -->
+      <div id="view-schedule" class="hidden flex-1 flex flex-col gap-5 fade-in">
+        <div class="glass-panel rounded-[26px] p-6">
+          <div class="flex items-center justify-between mb-5">
+            <div>
+              <h2 class="font-display font-bold text-xl">Haftalik Premyeralar va Qismlar Taqvimi</h2>
+              <p class="text-xs text-white/65 mt-1">Anime, Drama va yangi Kinolarning chiqish jadvali</p>
+            </div>
+            <span class="px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-xs font-medium">
+              Jonli yangilanadi
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="schedule-list"></div>
+        </div>
+      </div>
+
+      <!-- ========================================================= -->
+      <!-- VIEW 3: SAVED / USER PROFILE                              -->
+      <!-- ========================================================= -->
+      <div id="view-saved" class="hidden flex-1 flex flex-col gap-5 fade-in">
+        <div class="glass-panel rounded-[26px] p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div class="flex items-center gap-4">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80"
+                 alt="Foydalanuvchi" class="w-16 h-16 rounded-full object-cover ring-2 ring-rose-500" />
+            <div>
+              <div class="flex items-center gap-2">
+                <h2 class="font-display font-bold text-lg">Tomoshabin Profili</h2>
+                <span class="px-2.5 py-0.5 rounded-full btn-coral-gradient text-[10px] font-bold">VIP 4K</span>
+              </div>
+              <p id="user-cloud-id-label" class="text-xs text-white/65 mt-0.5">Cloud ID: ulanmoqda...</p>
+            </div>
+          </div>
+          <button onclick="requestAdminAccess()" class="btn-glass px-4 py-2.5 rounded-full text-xs font-semibold flex items-center gap-2 text-amber-200">
+            <i data-lucide="shield" class="w-4 h-4 text-amber-400"></i>
+            Admin Panelga o‘tish
+          </button>
+        </div>
+
+        <div class="glass-panel rounded-[26px] p-6">
+          <h3 class="font-display font-bold text-lg mb-4">Saqlangan Kino va Animelar</h3>
+          <div id="saved-media-grid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4"></div>
+        </div>
+      </div>
+
+      <!-- ========================================================= -->
+      <!-- VIEW 4: COMPREHENSIVE CLOUD ADMIN PANEL                   -->
+      <!-- ========================================================= -->
+      <div id="view-admin" class="hidden flex-1 flex flex-col gap-6 fade-in">
+
+        <!-- Admin Header & Sub-Navigation -->
+        <div class="glass-panel rounded-[24px] p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 border border-amber-400/25">
+          <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-amber-500 to-rose-600 flex items-center justify-center shadow-lg">
+              <i data-lucide="shield-check" class="w-6 h-6 text-white"></i>
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h2 class="font-display font-extrabold text-lg sm:text-xl text-white">MovieHub Cloud Admin Panel</h2>
+                <span class="px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-[10px] text-emerald-300 font-bold">Real-Time Sync</span>
+              </div>
+              <p class="text-xs text-white/65">Bu yerda yuklangan barcha videolar barcha foydalanuvchilarga darhol ko‘rinadi</p>
+            </div>
+          </div>
+
+          <!-- Admin Sub-Tabs -->
+          <div class="glass-pill-bar rounded-full p-1 flex items-center gap-1 overflow-x-auto">
+            <button onclick="setAdminTab('analytics')" data-admintab="analytics"
+              class="admin-subtab px-4 py-2 rounded-full text-xs font-semibold btn-coral-gradient text-white flex items-center gap-1.5 whitespace-nowrap">
+              <i data-lucide="bar-chart-3" class="w-3.5 h-3.5"></i>
+              Analitika
+            </button>
+            <button onclick="setAdminTab('upload')" data-admintab="upload"
+              class="admin-subtab px-4 py-2 rounded-full text-xs font-medium text-white/75 hover:text-white flex items-center gap-1.5 whitespace-nowrap">
+              <i data-lucide="upload-cloud" class="w-3.5 h-3.5"></i>
+              Video Yuklash
+            </button>
+            <button onclick="setAdminTab('manage')" data-admintab="manage"
+              class="admin-subtab px-4 py-2 rounded-full text-xs font-medium text-white/75 hover:text-white flex items-center gap-1.5 whitespace-nowrap">
+              <i data-lucide="database" class="w-3.5 h-3.5"></i>
+              Kontentlar (<span id="admin-total-count">0</span>)
+            </button>
+            <button onclick="setAdminTab('settings')" data-admintab="settings"
+              class="admin-subtab px-4 py-2 rounded-full text-xs font-medium text-white/75 hover:text-white flex items-center gap-1.5 whitespace-nowrap">
+              <i data-lucide="settings" class="w-3.5 h-3.5"></i>
+              Sozlamalar & Deploy
+            </button>
+          </div>
+        </div>
+
+        <!-- ADMIN TAB 1: ANALYTICS DASHBOARD -->
+        <div id="admin-tab-analytics" class="space-y-5">
+          <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+            <div class="glass-panel rounded-2xl p-4">
+              <div class="flex items-center justify-between">
+                <span class="text-xs text-white/65">Jami Ko‘rishlar (Cloud)</span>
+                <span class="w-8 h-8 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center">
+                  <i data-lucide="eye" class="w-4 h-4"></i>
+                </span>
+              </div>
+              <div id="kpi-total-views" class="font-display font-extrabold text-2xl mt-2">0</div>
+              <div class="text-[11px] text-emerald-400 mt-1 flex items-center gap-1">
+                <i data-lucide="trending-up" class="w-3 h-3"></i> Barcha qurilmalardan jonli
+              </div>
+            </div>
+
+            <div class="glass-panel rounded-2xl p-4">
+              <div class="flex items-center justify-between">
+                <span class="text-xs text-white/65">Jami Layklar</span>
+                <span class="w-8 h-8 rounded-xl bg-pink-500/20 text-pink-300 flex items-center justify-center">
+                  <i data-lucide="heart" class="w-4 h-4"></i>
+                </span>
+              </div>
+              <div id="kpi-total-likes" class="font-display font-extrabold text-2xl mt-2">0</div>
+              <div class="text-[11px] text-emerald-400 mt-1 flex items-center gap-1">
+                <i data-lucide="sparkles" class="w-3 h-3"></i> Tomoshabinlar bahosi
+              </div>
+            </div>
+
+            <div class="glass-panel rounded-2xl p-4">
+              <div class="flex items-center justify-between">
+                <span class="text-xs text-white/65">Umumiy Bazadagi Videolar</span>
+                <span class="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-300 flex items-center justify-center">
+                  <i data-lucide="film" class="w-4 h-4"></i>
+                </span>
+              </div>
+              <div id="kpi-media-count" class="font-display font-extrabold text-2xl mt-2">0</div>
+              <div class="text-[11px] text-white/60 mt-1">Kino, Drama, Anime, Multfilm</div>
+            </div>
+
+            <div class="glass-panel rounded-2xl p-4">
+              <div class="flex items-center justify-between">
+                <span class="text-xs text-white/65">Cloud Sinxronizatsiya</span>
+                <span class="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-300 flex items-center justify-center">
+                  <i data-lucide="cloud-check" class="w-4 h-4"></i>
+                </span>
+              </div>
+              <div id="kpi-cloud-mode" class="font-display font-extrabold text-2xl mt-2 text-emerald-300">Faol</div>
+              <div class="text-[11px] text-white/65 mt-1">Barcha foydalanuvchilar ulangan</div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+            <div class="glass-panel rounded-2xl p-5 lg:col-span-2">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="font-display font-bold text-sm sm:text-base">Bo‘limlar bo‘yicha ko‘rishlar statistikasi</h3>
+                <span class="text-xs text-white/55">Jonli ma'lumot</span>
+              </div>
+              <div class="h-64 w-full">
+                <canvas id="viewsChart"></canvas>
+              </div>
+            </div>
+
+            <div class="glass-panel rounded-2xl p-5">
+              <h3 class="font-display font-bold text-sm sm:text-base mb-4">Kategoriyalar Taqsimoti</h3>
+              <div class="h-64 w-full flex items-center justify-center">
+                <canvas id="categoryChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ADMIN TAB 2: CLOUD VIDEO & SERIES UPLOAD FORM -->
+        <div id="admin-tab-upload" class="hidden glass-panel rounded-2xl p-5 sm:p-7">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-5">
+            <div>
+              <h3 class="font-display font-bold text-lg">Yangi Kino, Drama, Anime yoki Multfilm Yuklash</h3>
+              <p class="text-xs text-white/65 mt-0.5">Kompyuter/telefondan haqiqiy video fayl yuklang yoki tayyor video havola (MP4/YouTube) kiriting.</p>
+            </div>
+          </div>
+
+          <form id="upload-media-form" onsubmit="handleMediaUpload(event)" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <!-- Left Column -->
+            <div class="space-y-4">
+              <div>
+                <label class="block text-xs font-medium text-white/80 mb-1.5">Kontent Nomi *</label>
+                <input type="text" id="up-title" required placeholder="Masalan: Solo Leveling 2-fasl yoki Qasoskorlar"
+                  class="w-full px-4 py-2.5 rounded-xl bg-white/10 border border-white/15 text-sm text-white placeholder-white/40 focus:outline-none focus:border-rose-400" />
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-medium text-white/80 mb-1.5">Bo‘lim (Kategoriya) *</label>
+                  <select id="up-category" required
+                    class="w-full px-4 py-2.5 rounded-xl bg-[#1c103d] border border-white/15 text-sm text-white focus:outline-none focus:border-rose-400">
+                    <option value="Kino">Kino</option>
+                    <option value="Drama">Drama</option>
+                    <option value="Anime">Anime</option>
+                    <option value="Multfilm">Multfilm</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-medium text-white/80 mb-1.5">Chiqarilgan Yili *</label>
+                  <input type="number" id="up-year" value="2026" min="1950" max="2030" required
+                    class="w-full px-4 py-2.5 rounded-xl bg-white/10 border border-white/15 text-sm text-white focus:outline-none focus:border-rose-400" />
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-medium text-white/80 mb-1.5">Janrlar (vergul bilan)</label>
+                  <input type="text" id="up-genres" placeholder="Fantastika, Jangari, Sarguzasht"
+                    class="w-full px-4 py-2.5 rounded-xl bg-white/10 border border-white/15 text-sm text-white placeholder-white/40 focus:outline-none focus:border-rose-400" />
+                </div>
+
+                <div>
+                  <label class="block text-xs font-medium text-white/80 mb-1.5">Reyting (1.0 - 10.0)</label>
+                  <input type="number" id="up-rating" step="0.1" min="1" max="10" value="9.2"
+                    class="w-full px-4 py-2.5 rounded-xl bg-white/10 border border-white/15 text-sm text-white focus:outline-none focus:border-rose-400" />
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-medium text-white/80 mb-1.5">Qisqacha Tavsif (Syujet) *</label>
+                <textarea id="up-desc" rows="3" required placeholder="Film yoki anime haqida qiziqarli ma'lumot kiriting..."
+                  class="w-full px-4 py-2.5 rounded-xl bg-white/10 border border-white/15 text-sm text-white placeholder-white/40 focus:outline-none focus:border-rose-400"></textarea>
+              </div>
+            </div>
+
+            <!-- Right Column: Cloud Storage File Upload or URLs -->
+            <div class="space-y-4">
+              <!-- Poster Image -->
+              <div class="p-4 rounded-2xl bg-white/5 border border-dashed border-white/25 space-y-2.5">
+                <label class="block text-xs font-semibold text-white/90">1. Muqova Rasmi (Rasm fayl yuklash yoki URL)</label>
+                <input type="url" id="up-poster-url" placeholder="https://example.com/poster.jpg"
+                  class="w-full px-3.5 py-2 rounded-xl bg-white/10 border border-white/15 text-xs text-white placeholder-white/40 focus:outline-none focus:border-rose-400" />
+                <div class="flex items-center justify-between gap-2">
+                  <label class="cursor-pointer btn-glass px-3.5 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5">
+                    <i data-lucide="image" class="w-3.5 h-3.5 text-pink-400"></i>
+                    Rasm tanlash (Cloud Storage)
+                    <input type="file" id="up-poster-file" accept="image/*" class="hidden" onchange="handlePosterFileSelect(this)" />
+                  </label>
+                  <span id="poster-file-name" class="text-[11px] text-white/55 truncate max-w-[160px]">Fayl tanlanmagan</span>
+                </div>
+              </div>
+
+              <!-- Video File -->
+              <div class="p-4 rounded-2xl bg-white/5 border border-dashed border-white/25 space-y-2.5">
+                <label class="block text-xs font-semibold text-white/90">2. Video Fayl (MP4/WebM yuklash yoki Video URL)</label>
+                <input type="url" id="up-video-url" placeholder="https://... (MP4 fayl yoki YouTube havola)"
+                  class="w-full px-3.5 py-2 rounded-xl bg-white/10 border border-white/15 text-xs text-white placeholder-white/40 focus:outline-none focus:border-rose-400" />
+                <div class="flex items-center justify-between gap-2">
+                  <label class="cursor-pointer btn-glass px-3.5 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5">
+                    <i data-lucide="video" class="w-3.5 h-3.5 text-amber-400"></i>
+                    Video fayl yuklash (Cloud)
+                    <input type="file" id="up-video-file" accept="video/*" class="hidden" onchange="handleVideoFileSelect(this)" />
+                  </label>
+                  <span id="video-file-name" class="text-[11px] text-white/55 truncate max-w-[160px]">Fayl tanlanmagan</span>
+                </div>
+              </div>
+
+              <!-- Options -->
+              <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
+                <label class="inline-flex items-center gap-2 cursor-pointer text-xs text-white/85">
+                  <input type="checkbox" id="up-featured" checked class="rounded accent-rose-500 w-4 h-4" />
+                  <span>Asosiy Hero Bannerda ko‘rsatish</span>
+                </label>
+
+                <label class="inline-flex items-center gap-2 cursor-pointer text-xs text-white/85">
+                  <input type="checkbox" id="up-is-series" onchange="toggleSeriesCountInput(this.checked)" class="rounded accent-rose-500 w-4 h-4" />
+                  <span>Ko‘p qismli (Serial / Anime)</span>
+                </label>
+              </div>
+
+              <div id="up-series-episodes-box" class="hidden">
+                <label class="block text-xs font-medium text-white/80 mb-1">Nechta qismdan iborat? (1-100)</label>
+                <input type="number" id="up-episodes-count" value="12" min="1" max="200"
+                  class="w-full px-3.5 py-2 rounded-xl bg-white/10 border border-white/15 text-xs text-white" />
+              </div>
+
+              <!-- Upload Progress Bar -->
+              <div id="upload-progress-wrapper" class="hidden space-y-1.5 p-3 rounded-xl bg-white/10 border border-white/15">
+                <div class="flex justify-between text-xs font-semibold">
+                  <span id="upload-status-label">Bulutli xotiraga yuklanmoqda...</span>
+                  <span id="upload-percent-text">0%</span>
+                </div>
+                <div class="w-full h-2 rounded-full bg-white/15 overflow-hidden">
+                  <div id="upload-progress-bar" class="h-full btn-coral-gradient transition-all duration-200" style="width: 0%"></div>
+                </div>
+              </div>
+
+              <button type="submit" id="publish-submit-btn" class="w-full btn-coral-gradient py-3 rounded-full text-sm font-bold text-white flex items-center justify-center gap-2 shadow-xl">
+                <i data-lucide="cloud-upload" class="w-4 h-4"></i>
+                Umumiy Saytga Nashr Qilish
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- ADMIN TAB 3: CONTENT MANAGEMENT TABLE -->
+        <div id="admin-tab-manage" class="hidden glass-panel rounded-2xl p-5">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+            <h3 class="font-display font-bold text-base">Barcha Umumiy Kontentlarni Boshqarish</h3>
+            <input type="text" id="admin-search-input" oninput="renderAdminTable()" placeholder="Nomi bo‘yicha qidirish..."
+              class="px-4 py-2 rounded-full bg-white/10 border border-white/15 text-xs text-white placeholder-white/45 focus:outline-none focus:border-rose-400" />
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="border-b border-white/15 text-[11px] uppercase text-white/55">
+                  <th class="py-3 px-3">Kontent</th>
+                  <th class="py-3 px-3">Bo‘lim</th>
+                  <th class="py-3 px-3">Reyting</th>
+                  <th class="py-3 px-3">Ko‘rishlar</th>
+                  <th class="py-3 px-3">Hero Banner</th>
+                  <th class="py-3 px-3 text-right">Amallar</th>
+                </tr>
+              </thead>
+              <tbody id="admin-content-tbody" class="divide-y divide-white/10 text-xs"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ADMIN TAB 4: SETTINGS & INTERNET DEPLOY GUIDE -->
+        <div id="admin-tab-settings" class="hidden glass-panel rounded-2xl p-5 sm:p-6 space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Announcement -->
+            <div class="space-y-3 p-4 rounded-2xl bg-white/5 border border-white/10">
+              <h3 class="font-display font-bold text-sm flex items-center gap-2">
+                <i data-lucide="megaphone" class="w-4 h-4 text-rose-400"></i>
+                Barcha foydalanuvchilar uchun jonli e’lon
+              </h3>
+              <input type="text" id="setting-announcement-input"
+                value="MovieHub 4K HDR serverlari ishga tushdi! Barcha yangi Anime, Drama va Kinolarni o‘zbek tilida tomosha qiling."
+                class="w-full px-4 py-2.5 rounded-xl bg-white/10 border border-white/15 text-xs text-white focus:outline-none focus:border-rose-400" />
+              <button onclick="updateSiteAnnouncement()" class="btn-coral-gradient px-4 py-2 rounded-full text-xs font-semibold">
+                E’lonni Yangilash
+              </button>
+            </div>
+
+            <!-- Admin PIN Change -->
+            <div class="space-y-3 p-4 rounded-2xl bg-white/5 border border-white/10">
+              <h3 class="font-display font-bold text-sm flex items-center gap-2">
+                <i data-lucide="lock" class="w-4 h-4 text-amber-400"></i>
+                Admin Panel Kirish Paroli (PIN)
+              </h3>
+              <div class="flex gap-2">
+                <input type="text" id="new-admin-pin-input" placeholder="Yangi parol (standart: 7777)"
+                  class="flex-1 px-4 py-2 rounded-xl bg-white/10 border border-white/15 text-xs text-white focus:outline-none" />
+                <button onclick="updateAdminPin()" class="btn-glass px-4 py-2 rounded-full text-xs font-semibold text-amber-200">
+                  Saqlash
+                </button>
+              </div>
+              <p class="text-[11px] text-white/55">Standart kirish kodi: <strong class="text-white">7777</strong>. O‘zingizga mos parol o‘rnatib oling.</p>
+            </div>
+          </div>
+
+          <!-- Own Domain / Netlify / Vercel Deployment Config -->
+          <div class="p-4 rounded-2xl bg-indigo-500/10 border border-indigo-400/25 space-y-3">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+              <h3 class="font-display font-bold text-sm text-indigo-200 flex items-center gap-2">
+                <i data-lucide="globe" class="w-4 h-4 text-indigo-400"></i>
+                Mustaqil Domen (Netlify / Vercel) uchun Firebase Sozlamasi
+              </h3>
+              <span class="text-[11px] px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-200">Ixtiyoriy</span>
+            </div>
+            <p class="text-xs text-white/75 leading-relaxed">
+              Hozir sayt avtomatik bulutli tizimga ulangan. Agar ushbu <code class="px-1.5 py-0.5 rounded bg-black/30 text-amber-200">index.html</code> faylni yuklab olib, o‘zingizning <strong>Vercel</strong> yoki <strong>Netlify</strong> xostingingizga joylashtirsangiz, o‘z Firebase loyihangiz konfiguratsiyasini shu yerga kiritishingiz mumkin:
+            </p>
+            <textarea id="custom-firebase-config" rows="3" placeholder='{"apiKey": "...", "authDomain": "...", "projectId": "...", "storageBucket": "..."}'
+              class="w-full px-3.5 py-2 rounded-xl bg-black/30 border border-white/15 text-xs font-mono text-white/90 placeholder-white/35 focus:outline-none"></textarea>
+            <div class="flex flex-wrap gap-2">
+              <button onclick="saveCustomFirebaseConfig()" class="btn-coral-gradient px-4 py-2 rounded-full text-xs font-semibold">
+                Firebase Konfiguratsiyani Saqlash
+              </button>
+              <button onclick="seedInitialCatalogToCloud(true)" class="btn-glass px-4 py-2 rounded-full text-xs font-semibold">
+                Boshlang‘ich Kino/Anime Katalogini Bazaga Yuklash
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- RIGHT FLOATING GLASS SIDEBAR -->
+    <aside class="glass-shell rounded-[32px] p-4 sm:p-5 w-full lg:w-[320px] xl:w-[345px] shrink-0 flex flex-col gap-5">
+
+      <!-- Top Utility Bar -->
+      <div class="flex items-center justify-between gap-2">
+        <div class="relative flex-1">
+          <i data-lucide="search" class="w-4 h-4 text-white/60 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+          <input type="text" id="global-search-input" oninput="handleGlobalSearch(this.value)"
+            placeholder="Kino, anime, drama..."
+            class="w-full pl-9 pr-3 py-2.5 rounded-full bg-white/10 hover:bg-white/15 focus:bg-white/15 border border-white/15 text-xs text-white placeholder-white/55 focus:outline-none focus:border-rose-400 transition-all" />
+        </div>
+
+        <button onclick="openNotificationsModal()" title="Bildirishnomalar"
+          class="w-10 h-10 rounded-full btn-glass flex items-center justify-center shrink-0 relative">
+          <i data-lucide="bell" class="w-4 h-4 text-white/85"></i>
+          <span class="absolute top-2.5 right-2.5 w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+        </button>
+
+        <button onclick="requestAdminAccess()" title="Admin Panel"
+          class="w-10 h-10 rounded-full btn-glass flex items-center justify-center shrink-0">
+          <i data-lucide="settings" class="w-4 h-4 text-white/85"></i>
+        </button>
+
+        <button onclick="switchMainView('saved')" title="Profil"
+          class="w-10 h-10 rounded-full overflow-hidden ring-2 ring-white/25 hover:ring-rose-400 transition-all shrink-0">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
+               alt="Avatar" class="w-full h-full object-cover" />
+        </button>
+      </div>
+
+      <!-- NEW TRAILERS SECTION -->
+      <section class="flex flex-col gap-3">
+        <div class="flex items-center justify-between">
+          <h3 class="font-display font-bold text-sm sm:text-base text-white">Yangi Treylerlar</h3>
+          <button onclick="toggleTrailerSort()" class="text-[11px] text-white/65 hover:text-white flex items-center gap-1">
+            Saralash: <span id="trailer-sort-label" class="font-semibold text-white">Yangi</span>
+            <i data-lucide="arrow-up-down" class="w-3 h-3"></i>
+          </button>
+        </div>
+
+        <div id="new-trailers-list" class="flex flex-col gap-3"></div>
+      </section>
+
+      <!-- CONTINUE WATCHING SECTION -->
+      <section class="flex-1 flex flex-col gap-3 pt-1">
+        <div class="flex items-center justify-between">
+          <h3 class="font-display font-bold text-sm sm:text-base text-white">Tomoshani davom ettirish</h3>
+          <span class="text-[11px] text-white/50">Tarix</span>
+        </div>
+
+        <div id="continue-watching-list" class="flex flex-col gap-2.5"></div>
+      </section>
+    </aside>
+
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- ADMIN AUTHENTICATION PIN MODAL                            -->
+  <!-- ========================================================= -->
+  <div id="admin-auth-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/75 backdrop-blur-lg">
+    <div class="glass-shell rounded-3xl w-full max-w-sm p-6 space-y-4 border border-amber-400/30 text-center">
+      <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-500 to-rose-600 mx-auto flex items-center justify-center shadow-lg">
+        <i data-lucide="key-round" class="w-6 h-6 text-white"></i>
+      </div>
+      <div>
+        <h3 class="font-display font-bold text-lg">Admin Panelga Kirish</h3>
+        <p class="text-xs text-white/65 mt-1">Video yuklash va analitikani ko‘rish uchun admin PIN kodni kiriting (standart: <strong class="text-amber-300">7777</strong>)</p>
+      </div>
+      <form onsubmit="verifyAdminPin(event)" class="space-y-3">
+        <input type="password" id="admin-pin-input" maxlength="12" placeholder="••••" autofocus
+          class="w-full text-center tracking-[0.4em] font-bold text-lg px-4 py-3 rounded-2xl bg-white/10 border border-white/20 text-white focus:outline-none focus:border-amber-400" />
+        <div class="flex gap-2">
+          <button type="button" onclick="closeAdminAuthModal()" class="flex-1 btn-glass py-2.5 rounded-full text-xs font-semibold">
+            Bekor qilish
+          </button>
+          <button type="submit" class="flex-1 btn-coral-gradient py-2.5 rounded-full text-xs font-bold">
+            Kirish
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- ADD EPISODE MODAL (FOR EXISTING ANIME / DRAMA)            -->
+  <!-- ========================================================= -->
+  <div id="add-episode-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/75 backdrop-blur-lg">
+    <div class="glass-shell rounded-3xl w-full max-w-md p-6 space-y-4 border border-white/20">
+      <div class="flex items-center justify-between">
+        <h3 class="font-display font-bold text-base">Yangi Qism Qo‘shish</h3>
+        <button onclick="closeAddEpisodeModal()" class="w-8 h-8 rounded-full btn-glass flex items-center justify-center">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <p id="ep-modal-media-title" class="text-xs text-rose-300 font-semibold"></p>
+      <form onsubmit="submitNewEpisode(event)" class="space-y-3">
+        <div>
+          <label class="block text-xs text-white/75 mb-1">Qism nomi yoki raqami</label>
+          <input type="text" id="new-ep-title" required placeholder="Masalan: 13-qism: Hal qiluvchi jang"
+            class="w-full px-3.5 py-2.5 rounded-xl bg-white/10 border border-white/15 text-xs text-white" />
+        </div>
+        <div>
+          <label class="block text-xs text-white/75 mb-1">Qism Video Havolasi (MP4 / YouTube)</label>
+          <input type="url" id="new-ep-url" required placeholder="https://..."
+            class="w-full px-3.5 py-2.5 rounded-xl bg-white/10 border border-white/15 text-xs text-white" />
+        </div>
+        <button type="submit" class="w-full btn-coral-gradient py-2.5 rounded-full text-xs font-bold">
+          Qismni Umumiy Bazaga Qo‘shish
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- IMMERSIVE VIDEO PLAYER MODAL (WITH CLOUD COMMENTS)        -->
+  <!-- ========================================================= -->
+  <div id="player-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-xl">
+    <div class="glass-shell rounded-[28px] w-full max-w-5xl max-h-[94vh] overflow-y-auto p-4 sm:p-6 relative border border-white/25 shadow-2xl">
+      <!-- Modal Top Header -->
+      <div class="flex items-center justify-between gap-3 mb-4">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <span id="player-cat-badge" class="px-3 py-1 rounded-full btn-coral-gradient text-xs font-bold shrink-0">Kino</span>
+          <h2 id="player-title" class="font-display font-bold text-base sm:text-xl truncate">Avatar: Olov va Kul</h2>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <select id="player-speed" onchange="changePlaybackSpeed(this.value)" title="Tezlik"
+            class="hidden sm:block bg-white/10 border border-white/20 rounded-full px-2.5 py-1.5 text-xs font-semibold text-white focus:outline-none">
+            <option value="0.75" class="bg-[#180c36]">0.75x</option>
+            <option value="1" selected class="bg-[#180c36]">1.0x</option>
+            <option value="1.25" class="bg-[#180c36]">1.25x</option>
+            <option value="1.5" class="bg-[#180c36]">1.5x</option>
+            <option value="2" class="bg-[#180c36]">2.0x</option>
+          </select>
+
+          <select id="player-quality" onchange="changeVideoQuality(this.value)"
+            class="bg-white/10 border border-white/20 rounded-full px-3 py-1.5 text-xs font-semibold text-white focus:outline-none">
+            <option value="1080p" class="bg-[#180c36]">1080p Full HD</option>
+            <option value="720p" class="bg-[#180c36]">720p HD</option>
+            <option value="480p" class="bg-[#180c36]">480p Tezkor</option>
+          </select>
+
+          <button onclick="closeVideoPlayer()" class="w-9 h-9 rounded-full btn-glass flex items-center justify-center text-white hover:bg-rose-500/40">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Video Container (Supports both direct MP4/Storage and YouTube Embeds) -->
+      <div class="relative rounded-2xl overflow-hidden bg-black aspect-video border border-white/15 shadow-inner">
+        <video id="html5-video-player" controls playsinline class="w-full h-full object-contain bg-black">
+          <source id="video-source-tag" src="" type="video/mp4" />
+          Sizning brauzeringiz video pleyerni qo‘llab-quvvatlamaydi.
+        </video>
+        <iframe id="youtube-embed-player" class="hidden w-full h-full border-0" allowfullscreen
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+      </div>
+
+      <!-- Episode Selector -->
+      <div id="player-episodes-box" class="hidden mt-4 p-3.5 rounded-2xl bg-white/5 border border-white/10">
+        <div class="text-xs font-semibold text-white/80 mb-2.5">Qismlarni tanlang (O‘zbekcha dublyaj):</div>
+        <div id="player-episodes-list" class="flex flex-wrap gap-2"></div>
+      </div>
+
+      <!-- Video Info, Like, Bookmark & Real-Time Cloud Comments -->
+      <div class="mt-5 grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div class="lg:col-span-2 space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-3 text-xs text-white/70">
+              <span class="flex items-center gap-1 text-amber-300 font-semibold">
+                <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400"></i>
+                <span id="player-rating">9.5</span>
+              </span>
+              <span>•</span>
+              <span id="player-year">2026</span>
+              <span>•</span>
+              <span id="player-views">0 marta ko‘rildi</span>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <button onclick="likeCurrentVideo()" class="btn-glass px-3.5 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 hover:text-rose-300">
+                <i data-lucide="heart" class="w-3.5 h-3.5 text-rose-400"></i>
+                <span id="player-likes-count">0</span>
+              </button>
+              <button onclick="bookmarkCurrentVideo()" class="btn-glass px-3.5 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5">
+                <i data-lucide="bookmark" class="w-3.5 h-3.5 text-amber-300"></i>
+                Saqlash
+              </button>
+              <button onclick="shareCurrentVideo()" class="btn-glass px-3.5 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5">
+                <i data-lucide="share-2" class="w-3.5 h-3.5 text-sky-300"></i>
+                Ulashish
+              </button>
+            </div>
+          </div>
+
+          <p id="player-desc" class="text-xs sm:text-sm text-white/80 leading-relaxed"></p>
+        </div>
+
+        <!-- Real-Time Cloud Comments Box -->
+        <div class="glass-panel rounded-2xl p-3.5 flex flex-col justify-between gap-3">
+          <div class="text-xs font-bold text-white/90 flex items-center justify-between">
+            <span>Umumiy Izohlar (Jonli)</span>
+            <span id="comment-count" class="text-white/50">0 ta</span>
+          </div>
+          <div id="player-comments-list" class="space-y-2 max-h-32 overflow-y-auto pr-1 text-xs"></div>
+          <form onsubmit="addPlayerComment(event)" class="flex items-center gap-1.5">
+            <input type="text" id="new-comment-input" placeholder="Barcha uchun izoh yozing..."
+              class="flex-1 px-3 py-1.5 rounded-full bg-white/10 border border-white/15 text-xs text-white placeholder-white/45 focus:outline-none" />
+            <button type="submit" class="btn-coral-gradient p-2 rounded-full text-white">
+              <i data-lucide="send" class="w-3.5 h-3.5"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- NOTIFICATIONS MODAL                                       -->
+  <!-- ========================================================= -->
+  <div id="notif-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/70 backdrop-blur-md">
+    <div class="glass-shell rounded-3xl w-full max-w-md p-5 space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="font-display font-bold text-base">So‘nggi Yangiliklar va Premyeralar</h3>
+        <button onclick="closeNotificationsModal()" class="w-8 h-8 rounded-full btn-glass flex items-center justify-center">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <div id="notifications-feed" class="space-y-2.5 text-xs max-h-72 overflow-y-auto"></div>
+    </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- FIREBASE CLOUD BACKEND + REAL-TIME APPLICATION LOGIC      -->
+  <!-- ========================================================= -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import {
+      getFirestore, doc, setDoc, addDoc, updateDoc, deleteDoc,
+      onSnapshot, collection, increment, serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import {
+      getStorage, ref, uploadBytesResumable, getDownloadURL
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
+
+    // Reliable Sample MP4 Streams
+    const SAMPLE_STREAMS = [
+      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
+      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4"
+    ];
+
+    // Starter Uzbek Catalog (Automatically seeded into Shared Cloud Firestore if empty)
+    const INITIAL_MEDIA = [
+      {
+        title: "Avatar: Olov va Kul",
+        category: "Kino",
+        genres: ["Fantastika", "Sarguzasht"],
+        year: 2026,
+        rating: 9.5,
+        views: 342800,
+        likes: 18420,
+        featured: true,
+        isSeries: false,
+        poster: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1400&q=85",
+        desc: "Pandora sayyorasining sirli vulqon hududlarida Jeyk Salli va Neytiri oilasi yangi xavf bilan yuzma-yuz keladi. Aql bovar qilmas vizual olam.",
+        videoUrl: SAMPLE_STREAMS[2],
+        createdAt: 1730000008000
+      },
+      {
+        title: "Sehrgarlar Janggi: Shibuya",
+        category: "Anime",
+        genres: ["Anime", "Jangari", "Fentezi"],
+        year: 2026,
+        rating: 9.6,
+        views: 419500,
+        likes: 29100,
+        featured: true,
+        isSeries: true,
+        episodes: 12,
+        episodeList: [
+          { title: "1-qism: Shibuya darvozasi", url: SAMPLE_STREAMS[1] },
+          { title: "2-qism: Muhrlangan kuch", url: SAMPLE_STREAMS[2] },
+          { title: "3-qism: Qorong‘u soyalar", url: SAMPLE_STREAMS[0] }
+        ],
+        poster: "https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=1000&q=85",
+        desc: "Yuji Itadori va Satoru Gojo la'natlangan ruhlarga qarshi eng hal qiluvchi jangga kirishadi. O‘zbek tilida professional dublyaj.",
+        videoUrl: SAMPLE_STREAMS[1],
+        createdAt: 1730000007000
+      },
+      {
+        title: "So‘nggi Qahramonlar (The Last of Us)",
+        category: "Drama",
+        genres: ["Drama", "Triller", "Post-apokalipsis"],
+        year: 2025,
+        rating: 9.3,
+        views: 285400,
+        likes: 15200,
+        featured: true,
+        isSeries: true,
+        episodes: 9,
+        episodeList: [
+          { title: "1-qism: Yolg‘iz yo‘l", url: SAMPLE_STREAMS[3] },
+          { title: "2-qism: Umid uchquni", url: SAMPLE_STREAMS[2] }
+        ],
+        poster: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1000&q=85",
+        desc: "Vayron bo‘lgan sivilizatsiya bo‘ylab Joel va Ellining xavfli va ta’sirli sayohati davom etadi.",
+        videoUrl: SAMPLE_STREAMS[3],
+        createdAt: 1730000006000
+      },
+      {
+        title: "Koko: Sirli Musiqa Olami",
+        category: "Multfilm",
+        genres: ["Multfilm", "Oilaviy", "Musiqiy"],
+        year: 2024,
+        rating: 9.2,
+        views: 198300,
+        likes: 14100,
+        featured: false,
+        isSeries: false,
+        poster: "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=1000&q=85",
+        desc: "Yosh musiqachi Migel o‘z ajdodlarining sirli tarixini ochish uchun sehrli va rang-barang dunyoga yo‘l oladi.",
+        videoUrl: SAMPLE_STREAMS[0],
+        createdAt: 1730000005000
+      },
+      {
+        title: "Forsaj X: So‘nggi Tezlik",
+        category: "Kino",
+        genres: ["Jangari", "Triller"],
+        year: 2025,
+        rating: 8.7,
+        views: 267100,
+        likes: 11900,
+        featured: false,
+        isSeries: false,
+        poster: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=1000&q=85",
+        desc: "Dom Toretto o‘z oilasini o‘tmishdan kelgan eng xavfli raqibdan himoya qilish uchun barcha imkoniyatlarini ishga soladi.",
+        videoUrl: SAMPLE_STREAMS[2],
+        createdAt: 1730000004000
+      },
+      {
+        title: "Iblislar Qotili: Cheksizlik Qal'asi",
+        category: "Anime",
+        genres: ["Anime", "Sarguzasht", "Drama"],
+        year: 2026,
+        rating: 9.7,
+        views: 512000,
+        likes: 38400,
+        featured: true,
+        isSeries: true,
+        episodes: 8,
+        episodeList: [
+          { title: "1-qism: Qal'aga kirish", url: SAMPLE_STREAMS[1] },
+          { title: "2-qism: Olov nafasi", url: SAMPLE_STREAMS[3] }
+        ],
+        poster: "https://images.unsplash.com/photo-1618336753974-aae8e04506aa?auto=format&fit=crop&w=1000&q=85",
+        desc: "Tanjiro va ustunlar Muzan Kibutsujining sirli qal'asida so‘nggi jangga kirishadilar.",
+        videoUrl: SAMPLE_STREAMS[1],
+        createdAt: 1730000003000
+      },
+      {
+        title: "Qishki Sonata: Seul Hikoyasi",
+        category: "Drama",
+        genres: ["Drama", "Romantika"],
+        year: 2025,
+        rating: 8.9,
+        views: 174900,
+        likes: 10850,
+        featured: false,
+        isSeries: true,
+        episodes: 16,
+        poster: "https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&w=1000&q=85",
+        desc: "Seulning qishki ko‘chalarida taqdir ikki yoshning yo‘llarini kutilmaganda birlashtiradi.",
+        videoUrl: SAMPLE_STREAMS[3],
+        createdAt: 1730000002000
+      },
+      {
+        title: "Trollar Ovchisi: Buyuk Jang",
+        category: "Multfilm",
+        genres: ["Multfilm", "Fentezi", "Komediya"],
+        year: 2025,
+        rating: 8.8,
+        views: 154600,
+        likes: 9400,
+        featured: false,
+        isSeries: false,
+        poster: "https://images.unsplash.com/photo-1635805737707-575885ab0820?auto=format&fit=crop&w=1000&q=85",
+        desc: "Oddiy o‘smir sehrli tumorni topib olgach, ikki olam tinchligini saqlash mas'uliyatini o‘z zimmasiga oladi.",
+        videoUrl: SAMPLE_STREAMS[0],
+        createdAt: 1730000001000
+      }
+    ];
+
+    // Global State
+    let app = null;
+    let db = null;
+    let auth = null;
+    let storage = null;
+    let currentUser = null;
+    let isCloudConnected = false;
+
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'moviehub-public-uz';
+
+    let mediaList = [];
+    let allComments = [];
+    let currentCategory = 'all';
+    let searchQuery = '';
+    let heroIndex = 0;
+    let activeMedia = null;
+    let savedIds = [];
+    let continueWatching = [];
+    let selectedPosterFile = null;
+    let selectedVideoFile = null;
+    let viewsChartInstance = null;
+    let categoryChartInstance = null;
+    let trailerSortAsc = false;
+    let isAdminUnlocked = false;
+    let adminPin = "7777";
+    let targetEpisodeMediaId = null;
+
+    // Resolve Firebase Config (Environment or User Custom Config for Standalone Hosting)
+    function resolveFirebaseConfig() {
+      if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+        try {
+          return JSON.parse(__firebase_config);
+        } catch (e) {}
+      }
+      const savedCustom = localStorage.getItem('moviehub_custom_firebase_cfg');
+      if (savedCustom) {
+        try {
+          return JSON.parse(savedCustom);
+        } catch (e) {}
+      }
+      return null;
+    }
+
+    // Initialize Cloud Backend
+    async function initCloudPlatform() {
+      loadUserPreferences();
+      renderSchedule();
+      lucide.createIcons();
+
+      const config = resolveFirebaseConfig();
+      if (!config) {
+        enableFallbackMode("Lokal rejim (Deploy uchun Firebase kiriting)");
+        return;
+      }
+
+      try {
+        app = initializeApp(config);
+        db = getFirestore(app);
+        auth = getAuth(app);
+        storage = getStorage(app);
+
+        // Rule 3: Auth BEFORE Firestore Queries
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+          await signInWithCustomToken(auth, __initial_auth_token);
+        } else {
+          await signInAnonymously(auth);
+        }
+
+        onAuthStateChanged(auth, (user) => {
+          if (!user) return;
+          currentUser = user;
+          isCloudConnected = true;
+          updateCloudBadge(true, "Cloud Live (Hammaga ochiq)");
+          document.getElementById('user-cloud-id-label').textContent = `Cloud ID: ${user.uid}`;
+
+          startRealtimeSubscriptions();
+        });
+      } catch (err) {
+        console.error("Firebase init error:", err);
+        enableFallbackMode("Offline / Zaxira rejim");
+      }
+    }
+
+    function updateCloudBadge(connected, label) {
+      const badge = document.getElementById('cloud-status-badge');
+      const dot = document.getElementById('cloud-status-dot');
+      const text = document.getElementById('cloud-status-text');
+      text.textContent = label;
+      if (connected) {
+        badge.className = "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-400/30 text-[10px] font-semibold text-emerald-300";
+        dot.className = "w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse";
+      } else {
+        badge.className = "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-500/15 border border-amber-400/30 text-[10px] font-semibold text-amber-300";
+        dot.className = "w-1.5 h-1.5 rounded-full bg-amber-400";
+      }
+    }
+
+    function enableFallbackMode(reason) {
+      isCloudConnected = false;
+      updateCloudBadge(false, reason);
+      mediaList = INITIAL_MEDIA.map((m, idx) => ({ ...m, id: `local-${idx + 1}` }));
+      renderAllUI();
+    }
+
+    // Rule 1 & Rule 2: Strict Public Paths & Simple Collection Queries
+    function startRealtimeSubscriptions() {
+      if (!db || !currentUser) return;
+
+      // 1. Public Media Catalog Collection
+      const mediaColRef = collection(db, 'artifacts', appId, 'public', 'data', 'media');
+      onSnapshot(mediaColRef, async (snapshot) => {
+        if (snapshot.empty) {
+          // Seed initial catalog once so everyone immediately has movies/anime/dramas
+          await seedInitialCatalogToCloud(false);
+          return;
+        }
+        const items = [];
+        snapshot.forEach((docSnap) => {
+          items.push({ id: docSnap.id, ...docSnap.data() });
+        });
+        // Sort in JS memory (Rule 2)
+        items.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+        mediaList = items;
+        renderAllUI();
+      }, (error) => {
+        console.error("Media snapshot error:", error);
+      });
+
+      // 2. Public Site Settings & Announcements Document
+      const settingsDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'site_config', 'main');
+      onSnapshot(settingsDocRef, (docSnap) => {
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          if (data.announcement) {
+            document.getElementById('announcement-text').textContent = data.announcement;
+            document.getElementById('setting-announcement-input').value = data.announcement;
+            document.getElementById('site-announcement-bar').classList.remove('hidden');
+          }
+          if (data.adminPin) {
+            adminPin = String(data.adminPin);
+          }
+        }
+      }, (err) => console.error("Settings snapshot error:", err));
+
+      // 3. Public Comments Collection
+      const commentsColRef = collection(db, 'artifacts', appId, 'public', 'data', 'comments');
+      onSnapshot(commentsColRef, (snapshot) => {
+        const list = [];
+        snapshot.forEach(d => list.push({ id: d.id, ...d.data() }));
+        list.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+        allComments = list;
+        if (activeMedia) {
+          renderActiveMediaComments(activeMedia.id);
+        }
+      }, (err) => console.error("Comments snapshot error:", err));
+    }
+
+    async function seedInitialCatalogToCloud(notify = true) {
+      if (!db || !currentUser) {
+        showToast("Avval Cloud bazaga ulanish kutilmoqda", "error");
+        return;
+      }
+      const mediaColRef = collection(db, 'artifacts', appId, 'public', 'data', 'media');
+      for (const item of INITIAL_MEDIA) {
+        await addDoc(mediaColRef, item);
+      }
+      if (notify) showToast("Boshlang‘ich Kino va Anime katalogi umumiy bazaga yuklandi!");
+    }
+
+    function renderAllUI() {
+      renderHero();
+      renderCatalog();
+      renderRightSidebar();
+      renderNotificationsFeed();
+      updateAdminStats();
+      if (!document.getElementById('view-admin').classList.contains('hidden')) {
+        renderAdminTable();
+        initAdminCharts();
+      }
+      if (!document.getElementById('view-saved').classList.contains('hidden')) {
+        renderSavedView();
+      }
+    }
+
+    function loadUserPreferences() {
+      try {
+        savedIds = JSON.parse(localStorage.getItem('moviehub_saved_v2') || '[]');
+        continueWatching = JSON.parse(localStorage.getItem('moviehub_continue_v2') || '[]');
+        const customCfg = localStorage.getItem('moviehub_custom_firebase_cfg');
+        if (customCfg) {
+          document.getElementById('custom-firebase-config').value = customCfg;
+        }
+      } catch (e) {
+        savedIds = [];
+        continueWatching = [];
+      }
+    }
+
+    // Toast Helper
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      const accentBorder = type === 'error' ? 'border-rose-500/50' : 'border-emerald-400/40';
+      const iconName = type === 'error' ? 'alert-circle' : 'check-circle-2';
+      const iconColor = type === 'error' ? 'text-rose-400' : 'text-emerald-400';
+
+      toast.className = `pointer-events-auto glass-shell ${accentBorder} px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-2.5 text-xs font-medium text-white fade-in max-w-xs`;
+      toast.innerHTML = `
+        <i data-lucide="${iconName}" class="w-4 h-4 ${iconColor} shrink-0"></i>
+        <span>${message}</span>
+      `;
+      container.appendChild(toast);
+      lucide.createIcons();
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(8px)';
+        toast.style.transition = 'all 0.25s ease';
+        setTimeout(() => toast.remove(), 260);
+      }, 3400);
+    }
+
+    // =========================================================
+    // NAVIGATION & ADMIN PIN PROTECTION
+    // =========================================================
+    function switchMainView(viewName) {
+      const views = ['home', 'schedule', 'saved', 'admin'];
+      views.forEach(v => {
+        const el = document.getElementById(`view-${v}`);
+        if (el) el.classList.toggle('hidden', v !== viewName);
+      });
+
+      document.querySelectorAll('.rail-btn').forEach(btn => {
+        btn.classList.remove('btn-coral-gradient', 'text-white');
+        btn.classList.add('bg-white/5', 'text-white/80');
+      });
+
+      const activeRail = document.getElementById(`nav-${viewName}`);
+      if (activeRail) {
+        activeRail.classList.remove('bg-white/5', 'text-white/80');
+        activeRail.classList.add('btn-coral-gradient', 'text-white');
+      }
+
+      document.getElementById('category-tabs-bar').classList.toggle('hidden', viewName === 'admin');
+      document.getElementById('header-admin-label').textContent = viewName === 'admin' ? 'Saytga Qaytish' : 'Admin Panel';
+
+      if (viewName === 'admin') {
+        updateAdminStats();
+        renderAdminTable();
+        setTimeout(initAdminCharts, 80);
+      } else if (viewName === 'saved') {
+        renderSavedView();
+      }
+      lucide.createIcons();
+    }
+
+    function requestAdminAccess() {
+      if (isAdminUnlocked) {
+        switchMainView('admin');
+        return;
+      }
+      const modal = document.getElementById('admin-auth-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      document.getElementById('admin-pin-input').value = '';
+      setTimeout(() => document.getElementById('admin-pin-input').focus(), 100);
+    }
+
+    function closeAdminAuthModal() {
+      const modal = document.getElementById('admin-auth-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function verifyAdminPin(e) {
+      e.preventDefault();
+      const entered = document.getElementById('admin-pin-input').value.trim();
+      if (entered === adminPin) {
+        isAdminUnlocked = true;
+        closeAdminAuthModal();
+        switchMainView('admin');
+        showToast("Admin Panelga xush kelibsiz!");
+      } else {
+        showToast("Noto‘g‘ri PIN kod! Standart kod: 7777", "error");
+      }
+    }
+
+    function toggleAdminQuick() {
+      const isAdminOpen = !document.getElementById('view-admin').classList.contains('hidden');
+      if (isAdminOpen) {
+        switchMainView('home');
+      } else {
+        requestAdminAccess();
+      }
+    }
+
+    // =========================================================
+    // HERO BANNER LOGIC
+    // =========================================================
+    function getFeaturedList() {
+      const featured = mediaList.filter(m => m.featured);
+      return featured.length > 0 ? featured : mediaList;
+    }
+
+    function renderHero() {
+      const slides = getFeaturedList();
+      if (slides.length === 0) return;
+      if (heroIndex >= slides.length) heroIndex = 0;
+      const item = slides[heroIndex];
+
+      document.getElementById('hero-backdrop').src = item.poster;
+      document.getElementById('hero-badge').textContent = `Yangi Trend • ${item.category}`;
+      document.getElementById('hero-rating').textContent = item.rating;
+      document.getElementById('hero-year').textContent = item.year;
+      document.getElementById('hero-title').textContent = item.title;
+      document.getElementById('hero-desc').textContent = item.desc;
+
+      const genresHtml = (item.genres || [item.category]).map(g =>
+        `<span class="px-3 py-1 rounded-full bg-white/15 backdrop-blur-md border border-white/15 text-xs font-medium">${g}</span>`
+      ).join('');
+      document.getElementById('hero-genres').innerHTML = genresHtml;
+
+      document.getElementById('hero-dots').innerHTML = slides.slice(0, 6).map((_, idx) => `
+        <button onclick="heroIndex=${idx}; renderHero()"
+          class="h-1.5 rounded-full transition-all ${idx === heroIndex ? 'w-6 bg-rose-500' : 'w-1.5 bg-white/40'}"></button>
+      `).join('');
+    }
+
+    function nextHeroSlide() {
+      const slides = getFeaturedList();
+      if (!slides.length) return;
+      heroIndex = (heroIndex + 1) % slides.length;
+      renderHero();
+    }
+
+    function prevHeroSlide() {
+      const slides = getFeaturedList();
+      if (!slides.length) return;
+      heroIndex = (heroIndex - 1 + slides.length) % slides.length;
+      renderHero();
+    }
+
+    function playHeroMedia() {
+      const slides = getFeaturedList();
+      if (slides[heroIndex]) openVideoPlayer(slides[heroIndex].id);
+    }
+
+    function downloadHeroMedia() {
+      const slides = getFeaturedList();
+      if (slides[heroIndex]) {
+        const link = document.createElement('a');
+        link.href = slides[heroIndex].videoUrl;
+        link.target = '_blank';
+        link.download = `${slides[heroIndex].title}.mp4`;
+        link.click();
+        showToast(`"${slides[heroIndex].title}" yuklab olish oynasi ochildi!`);
+      }
+    }
+
+    function bookmarkHeroMedia() {
+      const slides = getFeaturedList();
+      if (slides[heroIndex]) toggleBookmark(slides[heroIndex].id);
+    }
+
+    // =========================================================
+    // CATALOG FILTERING & RENDERING
+    // =========================================================
+    function setCategory(cat) {
+      currentCategory = cat;
+      switchMainView('home');
+
+      document.querySelectorAll('.cat-pill').forEach(btn => {
+        const isMatch = btn.dataset.cat === cat;
+        if (isMatch) {
+          btn.classList.add('btn-coral-gradient', 'text-white', 'font-semibold');
+          btn.classList.remove('text-white/75', 'font-medium');
+        } else {
+          btn.classList.remove('btn-coral-gradient', 'text-white', 'font-semibold');
+          btn.classList.add('text-white/75', 'font-medium');
+        }
+      });
+
+      const titleMap = {
+        'all': 'Sizga yoqishi mumkin',
+        'Kino': 'Eng Sara Kinolar',
+        'Drama': 'Mashhur Drama va Seriallar',
+        'Anime': 'Top Anime Olami',
+        'Multfilm': 'Qiziqarli Multfilmlar'
+      };
+      document.getElementById('catalog-section-title').textContent = titleMap[cat] || cat;
+      renderCatalog();
+    }
+
+    function handleGlobalSearch(val) {
+      searchQuery = val.trim().toLowerCase();
+      if (document.getElementById('view-home').classList.contains('hidden')) {
+        switchMainView('home');
+      }
+      renderCatalog();
+    }
+
+    function resetFilters() {
+      currentCategory = 'all';
+      searchQuery = '';
+      document.getElementById('global-search-input').value = '';
+      setCategory('all');
+    }
+
+    function renderCatalog() {
+      const grid = document.getElementById('media-grid');
+      const emptyBox = document.getElementById('catalog-empty');
+      const sortMode = document.getElementById('sort-catalog-select').value;
+
+      let filtered = mediaList.filter(item => {
+        const matchesCat = currentCategory === 'all' || item.category === currentCategory;
+        const matchesQuery = !searchQuery ||
+          (item.title && item.title.toLowerCase().includes(searchQuery)) ||
+          (item.desc && item.desc.toLowerCase().includes(searchQuery)) ||
+          (item.genres && item.genres.some(g => g.toLowerCase().includes(searchQuery)));
+        return matchesCat && matchesQuery;
+      });
+
+      if (sortMode === 'rating') {
+        filtered.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+      } else if (sortMode === 'views') {
+        filtered.sort((a, b) => (b.views || 0) - (a.views || 0));
+      } else {
+        filtered.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+      }
+
+      document.getElementById('catalog-count-badge').textContent = `${filtered.length} ta kontent`;
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '';
+        emptyBox.classList.remove('hidden');
+        return;
+      }
+
+      emptyBox.classList.add('hidden');
+      grid.innerHTML = filtered.map(item => createMediaCardHTML(item)).join('');
+      lucide.createIcons();
+    }
+
+    function createMediaCardHTML(item) {
+      const isSaved = savedIds.includes(item.id);
+      const genreLabel = (item.genres && item.genres[0]) ? item.genres[0] : item.category;
+      const epTag = item.isSeries ? ` • ${(item.episodeList?.length || item.episodes || 1)} qism` : '';
+
+      return `
+        <article onclick="openVideoPlayer('${item.id}')"
+          class="media-card group relative rounded-[22px] overflow-hidden h-[255px] sm:h-[270px] cursor-pointer border border-white/15 bg-[#190d38]">
+          <img src="${item.poster}" alt="${item.title}"
+            onerror="this.src='https://placehold.co/600x800/24124d/ffffff?text=${encodeURIComponent(item.title)}'"
+            class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+
+          <div class="absolute inset-0 bg-gradient-to-t from-[#0b041c] via-[#0e0624]/45 to-transparent"></div>
+
+          <!-- Top Badges -->
+          <div class="absolute top-3 left-3 right-3 flex items-center justify-between">
+            <span class="px-2.5 py-1 rounded-full bg-black/50 backdrop-blur-md border border-white/15 text-[10px] font-semibold text-white">
+              ${item.category}${epTag}
+            </span>
+            <button onclick="event.stopPropagation(); toggleBookmark('${item.id}')"
+              class="w-7 h-7 rounded-full bg-black/50 backdrop-blur-md border border-white/15 flex items-center justify-center text-white hover:bg-rose-500 transition-colors">
+              <i data-lucide="bookmark" class="w-3.5 h-3.5 ${isSaved ? 'fill-amber-400 text-amber-400' : ''}"></i>
+            </button>
+          </div>
+
+          <!-- Bottom Info & Circular Play Button -->
+          <div class="absolute bottom-3 left-3.5 right-3.5 flex items-end justify-between gap-2">
+            <div class="min-w-0 flex-1">
+              <span class="inline-block px-2 py-0.5 rounded-full bg-white/15 backdrop-blur-sm text-[10px] text-white/90 mb-1">
+                ${genreLabel} • ★ ${item.rating}
+              </span>
+              <h3 class="font-display font-bold text-sm sm:text-base text-white truncate">${item.title}</h3>
+              <p class="text-[11px] text-white/70 line-clamp-2 leading-snug mt-0.5">${item.desc}</p>
+            </div>
+
+            <button aria-label="Tomosha qilish"
+              class="w-9 h-9 rounded-full bg-white/25 group-hover:btn-coral-gradient backdrop-blur-md border border-white/30 flex items-center justify-center shrink-0 transition-all shadow-lg">
+              <i data-lucide="play" class="w-4 h-4 fill-white text-white ml-0.5"></i>
+            </button>
+          </div>
+        </article>
+      `;
+    }
+
+    // =========================================================
+    // RIGHT SIDEBAR: NEW TRAILERS & CONTINUE WATCHING
+    // =========================================================
+    function toggleTrailerSort() {
+      trailerSortAsc = !trailerSortAsc;
+      document.getElementById('trailer-sort-label').textContent = trailerSortAsc ? 'Reyting' : 'Yangi';
+      renderRightSidebar();
+    }
+
+    function renderRightSidebar() {
+      const trailersContainer = document.getElementById('new-trailers-list');
+      let trailers = [...mediaList];
+      if (trailerSortAsc) {
+        trailers.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+      }
+      trailers = trailers.slice(0, 2);
+
+      trailersContainer.innerHTML = trailers.map(t => `
+        <div onclick="openVideoPlayer('${t.id}')"
+          class="group relative h-[124px] rounded-[20px] overflow-hidden cursor-pointer border border-white/15">
+          <img src="${t.poster}" alt="${t.title}"
+            onerror="this.src='https://placehold.co/500x300/24124d/ffffff?text=Treyler'"
+            class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent"></div>
+          <div class="absolute bottom-2.5 left-3 right-3 flex items-center justify-between gap-2">
+            <div class="min-w-0">
+              <div class="text-[10px] uppercase tracking-wider text-rose-300 font-bold">${t.category} • Premyera</div>
+              <div class="font-display font-bold text-xs sm:text-sm text-white truncate">${t.title}</div>
+            </div>
+            <span class="w-8 h-8 rounded-full bg-white/25 group-hover:btn-coral-gradient backdrop-blur-md flex items-center justify-center shrink-0 transition-all">
+              <i data-lucide="play" class="w-3.5 h-3.5 fill-white text-white ml-0.5"></i>
+            </span>
+          </div>
+        </div>
+      `).join('');
+
+      const cwContainer = document.getElementById('continue-watching-list');
+      const fallbackCW = mediaList.slice(0, 3).map((m, idx) => ({
+        id: m.id,
+        episode: m.isSeries ? '1-fasl • 01-qism' : 'To‘liq film • 4K',
+        progress: 35 + idx * 20
+      }));
+      const listToShow = continueWatching.length > 0 ? continueWatching : fallbackCW;
+
+      cwContainer.innerHTML = listToShow.map(entry => {
+        const item = mediaList.find(m => m.id === entry.id);
+        if (!item) return '';
+        return `
+          <div onclick="openVideoPlayer('${item.id}')"
+            class="glass-panel hover:bg-white/15 rounded-2xl p-2.5 flex items-center justify-between gap-2.5 cursor-pointer transition-all group">
+            <img src="${item.poster}" alt="${item.title}"
+              onerror="this.src='https://placehold.co/100x100/24124d/ffffff?text=MH'"
+              class="w-11 h-11 rounded-xl object-cover shrink-0 border border-white/15" />
+            <div class="min-w-0 flex-1">
+              <div class="font-semibold text-xs text-white truncate">${item.title}</div>
+              <div class="text-[10px] text-white/60 mt-0.5">${entry.episode}</div>
+              <div class="w-full h-1 bg-white/15 rounded-full mt-1.5 overflow-hidden">
+                <div class="h-full btn-coral-gradient rounded-full" style="width: ${entry.progress}%"></div>
+              </div>
+            </div>
+            <span class="w-7 h-7 rounded-full bg-white/10 group-hover:btn-coral-gradient flex items-center justify-center shrink-0 transition-all">
+              <i data-lucide="play" class="w-3 h-3 fill-white text-white ml-0.5"></i>
+            </span>
+          </div>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+    }
+
+    function renderNotificationsFeed() {
+      const feed = document.getElementById('notifications-feed');
+      const latest = mediaList.slice(0, 4);
+      feed.innerHTML = latest.map(m => `
+        <div onclick="closeNotificationsModal(); openVideoPlayer('${m.id}')"
+          class="p-3 rounded-2xl bg-white/10 hover:bg-white/15 border border-white/10 flex items-start gap-3 cursor-pointer transition-all">
+          <span class="w-2 h-2 rounded-full bg-rose-500 mt-1.5 shrink-0"></span>
+          <div>
+            <div class="font-semibold text-white">${m.title} (${m.category})</div>
+            <p class="text-white/65 mt-0.5 line-clamp-2">${m.desc}</p>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // =========================================================
+    // SCHEDULE & SAVED VIEWS
+    // =========================================================
+    function renderSchedule() {
+      const scheduleItems = [
+        { day: "Dushanba • 20:00", title: "Sehrgarlar Janggi: Shibuya (Yangi qism)", cat: "Anime", status: "Tez kunda" },
+        { day: "Chorshanba • 21:00", title: "So‘nggi Qahramonlar (2-fasl)", cat: "Drama", status: "Premyera" },
+        { day: "Juma • 19:30", title: "Avatar: Olov va Kul (4K HDR)", cat: "Kino", status: "Ultra HD" },
+        { day: "Yakshanba • 17:00", title: "Trollar Ovchisi: Buyuk Jang", cat: "Multfilm", status: "Oilaviy" }
+      ];
+      document.getElementById('schedule-list').innerHTML = scheduleItems.map(s => `
+        <div class="p-4 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-between gap-3">
+          <div>
+            <span class="text-[11px] text-rose-300 font-semibold">${s.day}</span>
+            <h4 class="font-bold text-sm text-white mt-0.5">${s.title}</h4>
+            <span class="inline-block mt-1 px-2.5 py-0.5 rounded-full bg-white/10 text-[10px]">${s.cat}</span>
+          </div>
+          <span class="px-3 py-1 rounded-full btn-coral-gradient text-[11px] font-semibold">${s.status}</span>
+        </div>
+      `).join('');
+    }
+
+    function toggleBookmark(id) {
+      if (savedIds.includes(id)) {
+        savedIds = savedIds.filter(x => x !== id);
+        showToast("Saqlanganlardan olib tashlandi");
+      } else {
+        savedIds.push(id);
+        showToast("Saqlanganlarga qo‘shildi!");
+      }
+      localStorage.setItem('moviehub_saved_v2', JSON.stringify(savedIds));
+      renderCatalog();
+      if (!document.getElementById('view-saved').classList.contains('hidden')) {
+        renderSavedView();
+      }
+    }
+
+    function renderSavedView() {
+      const grid = document.getElementById('saved-media-grid');
+      const items = mediaList.filter(m => savedIds.includes(m.id));
+      if (items.length === 0) {
+        grid.innerHTML = `<p class="text-xs text-white/60 col-span-full">Hozircha saqlangan kontentlar yo‘q. Katalogdagi belgi orqali saqlang.</p>`;
+        return;
+      }
+      grid.innerHTML = items.map(item => createMediaCardHTML(item)).join('');
+      lucide.createIcons();
+    }
+
+    // =========================================================
+    // VIDEO PLAYER MODAL (MP4 + YOUTUBE + CLOUD COMMENTS)
+    // =========================================================
+    function extractYouTubeId(url) {
+      if (!url) return null;
+      const regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+      const match = url.match(regExp);
+      return match ? match[1] : null;
+    }
+
+    function loadVideoSourceIntoPlayer(videoUrl) {
+      const videoEl = document.getElementById('html5-video-player');
+      const sourceEl = document.getElementById('video-source-tag');
+      const ytEl = document.getElementById('youtube-embed-player');
+
+      const ytId = extractYouTubeId(videoUrl);
+      if (ytId) {
+        videoEl.pause();
+        videoEl.classList.add('hidden');
+        ytEl.classList.remove('hidden');
+        ytEl.src = `https://www.youtube.com/embed/${ytId}?autoplay=1`;
+      } else {
+        ytEl.src = '';
+        ytEl.classList.add('hidden');
+        videoEl.classList.remove('hidden');
+        sourceEl.src = videoUrl || SAMPLE_STREAMS[0];
+        videoEl.load();
+        videoEl.play().catch(() => {});
+      }
+    }
+
+    async function openVideoPlayer(id) {
+      const item = mediaList.find(m => m.id === id);
+      if (!item) return;
+
+      activeMedia = item;
+
+      // Increment views in Cloud Firestore
+      if (isCloudConnected && db && !id.startsWith('local-')) {
+        try {
+          const mediaDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'media', id);
+          await updateDoc(mediaDocRef, { views: increment(1) });
+        } catch (e) {}
+      } else {
+        item.views = (item.views || 0) + 1;
+      }
+
+      document.getElementById('player-cat-badge').textContent = item.category;
+      document.getElementById('player-title').textContent = item.title;
+      document.getElementById('player-rating').textContent = item.rating;
+      document.getElementById('player-year').textContent = item.year;
+      document.getElementById('player-views').textContent = `${((item.views || 0) + 1).toLocaleString()} marta ko‘rildi`;
+      document.getElementById('player-likes-count').textContent = (item.likes || 0).toLocaleString();
+      document.getElementById('player-desc').textContent = item.desc;
+
+      loadVideoSourceIntoPlayer(item.videoUrl);
+
+      // Episodes Selector if series
+      const epBox = document.getElementById('player-episodes-box');
+      const epList = document.getElementById('player-episodes-list');
+      if (item.isSeries) {
+        epBox.classList.remove('hidden');
+        const customEpisodes = item.episodeList && item.episodeList.length > 0
+          ? item.episodeList
+          : Array.from({ length: item.episodes || 6 }, (_, i) => ({
+              title: `${i + 1}-qism`,
+              url: item.videoUrl || SAMPLE_STREAMS[i % SAMPLE_STREAMS.length]
+            }));
+
+        epList.innerHTML = customEpisodes.map((ep, idx) => `
+          <button onclick="selectEpisode(${idx}, '${ep.url.replace(/'/g, "\\'")}', '${ep.title.replace(/'/g, "\\'")}')"
+            class="ep-btn px-3.5 py-1.5 rounded-full text-xs font-semibold ${idx === 0 ? 'btn-coral-gradient text-white' : 'btn-glass text-white/80'}">
+            ${ep.title}
+          </button>
+        `).join('');
+      } else {
+        epBox.classList.add('hidden');
+      }
+
+      // Render Comments for this video
+      renderActiveMediaComments(item.id);
+
+      // Save to local Continue Watching
+      const existingIdx = continueWatching.findIndex(c => c.id === item.id);
+      const newEntry = {
+        id: item.id,
+        episode: item.isSeries ? '1-fasl • 01-qism' : 'To‘liq film • HD',
+        progress: 35
+      };
+      if (existingIdx > -1) continueWatching.splice(existingIdx, 1);
+      continueWatching.unshift(newEntry);
+      continueWatching = continueWatching.slice(0, 4);
+      localStorage.setItem('moviehub_continue_v2', JSON.stringify(continueWatching));
+      renderRightSidebar();
+
+      const modal = document.getElementById('player-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      lucide.createIcons();
+    }
+
+    function selectEpisode(idx, epUrl, epTitle) {
+      document.querySelectorAll('.ep-btn').forEach((btn, i) => {
+        if (i === idx) {
+          btn.classList.add('btn-coral-gradient', 'text-white');
+          btn.classList.remove('btn-glass', 'text-white/80');
+        } else {
+          btn.classList.remove('btn-coral-gradient', 'text-white');
+          btn.classList.add('btn-glass', 'text-white/80');
+        }
+      });
+      loadVideoSourceIntoPlayer(epUrl);
+      showToast(`${epTitle} ishga tushirildi`);
+    }
+
+    function closeVideoPlayer() {
+      const videoEl = document.getElementById('html5-video-player');
+      const ytEl = document.getElementById('youtube-embed-player');
+      videoEl.pause();
+      ytEl.src = '';
+      const modal = document.getElementById('player-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      activeMedia = null;
+    }
+
+    function changeVideoQuality(q) {
+      showToast(`Video sifati ${q} rejimiga o‘tkazildi`);
+    }
+
+    function changePlaybackSpeed(speed) {
+      const videoEl = document.getElementById('html5-video-player');
+      videoEl.playbackRate = parseFloat(speed);
+      showToast(`Ijro tezligi: ${speed}x`);
+    }
+
+    async function likeCurrentVideo() {
+      if (!activeMedia) return;
+      if (isCloudConnected && db && !activeMedia.id.startsWith('local-')) {
+        try {
+          const mediaDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'media', activeMedia.id);
+          await updateDoc(mediaDocRef, { likes: increment(1) });
+          document.getElementById('player-likes-count').textContent = ((activeMedia.likes || 0) + 1).toLocaleString();
+          showToast("Laykingiz umumiy bazaga saqlandi!");
+        } catch (e) {}
+      } else {
+        activeMedia.likes = (activeMedia.likes || 0) + 1;
+        document.getElementById('player-likes-count').textContent = activeMedia.likes.toLocaleString();
+        showToast("Yoqtirish belgilandi!");
+      }
+    }
+
+    function bookmarkCurrentVideo() {
+      if (activeMedia) toggleBookmark(activeMedia.id);
+    }
+
+    function shareCurrentVideo() {
+      if (!activeMedia) return;
+      const shareText = `${activeMedia.title} — MovieHub platformasida onlayn tomosha qiling!`;
+      const dummy = document.createElement('textarea');
+      dummy.value = `${shareText} (${window.location.href})`;
+      document.body.appendChild(dummy);
+      dummy.select();
+      document.execCommand('copy');
+      document.body.removeChild(dummy);
+      showToast("Havola nusxalandi! Do‘stlaringizga yuborishingiz mumkin.");
+    }
+
+    function renderActiveMediaComments(mediaId) {
+      const list = document.getElementById('player-comments-list');
+      const filtered = allComments.filter(c => c.mediaId === mediaId);
+      document.getElementById('comment-count').textContent = `${filtered.length} ta`;
+
+      if (filtered.length === 0) {
+        list.innerHTML = `<div class="p-2.5 rounded-xl bg-white/5 text-white/55 text-center">Birinchi bo‘lib fikr qoldiring!</div>`;
+        return;
+      }
+
+      list.innerHTML = filtered.map(c => `
+        <div class="p-2 rounded-xl bg-white/10">
+          <span class="font-semibold text-rose-300">${c.author || 'Tomoshabin'}:</span>
+          <span class="text-white/90">${c.text}</span>
+        </div>
+      `).join('');
+    }
+
+    async function addPlayerComment(e) {
+      e.preventDefault();
+      const input = document.getElementById('new-comment-input');
+      const text = input.value.trim();
+      if (!text || !activeMedia) return;
+
+      input.value = '';
+      if (isCloudConnected && db) {
+        try {
+          const commentsColRef = collection(db, 'artifacts', appId, 'public', 'data', 'comments');
+          await addDoc(commentsColRef, {
+            mediaId: activeMedia.id,
+            author: `Tomoshabin #${(currentUser?.uid || '100').slice(0, 4)}`,
+            text,
+            createdAt: Date.now()
+          });
+          showToast("Izohingiz barcha foydalanuvchilar uchun nashr qilindi!");
+        } catch (err) {
+          showToast("Izoh yuborishda xatolik", "error");
+        }
+      } else {
+        allComments.unshift({
+          mediaId: activeMedia.id,
+          author: "Siz",
+          text,
+          createdAt: Date.now()
+        });
+        renderActiveMediaComments(activeMedia.id);
+      }
+    }
+
+    function openNotificationsModal() {
+      const m = document.getElementById('notif-modal');
+      m.classList.remove('hidden');
+      m.classList.add('flex');
+    }
+
+    function closeNotificationsModal() {
+      const m = document.getElementById('notif-modal');
+      m.classList.add('hidden');
+      m.classList.remove('flex');
+    }
+
+    // =========================================================
+    // ADMIN PANEL: CLOUD FILE UPLOAD, MANAGE & SETTINGS
+    // =========================================================
+    function setAdminTab(tab) {
+      ['analytics', 'upload', 'manage', 'settings'].forEach(t => {
+        document.getElementById(`admin-tab-${t}`).classList.toggle('hidden', t !== tab);
+      });
+
+      document.querySelectorAll('.admin-subtab').forEach(btn => {
+        const active = btn.dataset.admintab === tab;
+        if (active) {
+          btn.classList.add('btn-coral-gradient', 'text-white', 'font-semibold');
+          btn.classList.remove('text-white/75', 'font-medium');
+        } else {
+          btn.classList.remove('btn-coral-gradient', 'text-white', 'font-semibold');
+          btn.classList.add('text-white/75', 'font-medium');
+        }
+      });
+
+      if (tab === 'analytics') initAdminCharts();
+      if (tab === 'manage') renderAdminTable();
+      lucide.createIcons();
+    }
+
+    function toggleSeriesCountInput(checked) {
+      document.getElementById('up-series-episodes-box').classList.toggle('hidden', !checked);
+    }
+
+    function handlePosterFileSelect(input) {
+      const file = input.files[0];
+      if (!file) return;
+      selectedPosterFile = file;
+      document.getElementById('poster-file-name').textContent = file.name;
+      showToast(`Rasm tanlandi: ${file.name}`);
+    }
+
+    function handleVideoFileSelect(input) {
+      const file = input.files[0];
+      if (!file) return;
+      selectedVideoFile = file;
+      document.getElementById('video-file-name').textContent = `${file.name} (${(file.size / (1024 * 1024)).toFixed(1)} MB)`;
+      showToast(`Video fayl yuklashga tayyor: ${file.name}`);
+    }
+
+    // Upload file to Firebase Cloud Storage with real-time progress bar
+    function uploadFileToCloudStorage(file, folderPath, labelText) {
+      return new Promise((resolve, reject) => {
+        if (!storage) {
+          reject(new Error("Cloud Storage ulanmagan"));
+          return;
+        }
+        const wrapper = document.getElementById('upload-progress-wrapper');
+        const label = document.getElementById('upload-status-label');
+        const percentText = document.getElementById('upload-percent-text');
+        const bar = document.getElementById('upload-progress-bar');
+
+        wrapper.classList.remove('hidden');
+        label.textContent = labelText;
+
+        const cleanName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+        const storageRef = ref(storage, `artifacts/${appId}/public/${folderPath}/${cleanName}`);
+        const uploadTask = uploadBytesResumable(storageRef, file);
+
+        uploadTask.on('state_changed',
+          (snapshot) => {
+            const pct = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+            percentText.textContent = `${pct}%`;
+            bar.style.width = `${pct}%`;
+          },
+          (error) => reject(error),
+          async () => {
+            const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
+            resolve(downloadUrl);
+          }
+        );
+      });
+    }
+
+    async function handleMediaUpload(e) {
+      e.preventDefault();
+      const submitBtn = document.getElementById('publish-submit-btn');
+      submitBtn.disabled = true;
+      submitBtn.classList.add('opacity-60');
+
+      try {
+        const title = document.getElementById('up-title').value.trim();
+        const category = document.getElementById('up-category').value;
+        const year = parseInt(document.getElementById('up-year').value, 10) || 2026;
+        const genresRaw = document.getElementById('up-genres').value.trim();
+        const rating = parseFloat(document.getElementById('up-rating').value) || 9.2;
+        const desc = document.getElementById('up-desc').value.trim();
+        let posterUrl = document.getElementById('up-poster-url').value.trim();
+        let videoUrl = document.getElementById('up-video-url').value.trim();
+        const featured = document.getElementById('up-featured').checked;
+        const isSeries = document.getElementById('up-is-series').checked;
+        const epCount = parseInt(document.getElementById('up-episodes-count').value, 10) || 12;
+
+        // 1. Upload Poster to Cloud Storage if file selected
+        if (selectedPosterFile && isCloudConnected && storage) {
+          posterUrl = await uploadFileToCloudStorage(selectedPosterFile, 'posters', 'Muqova rasmi bulutga yuklanmoqda...');
+        }
+
+        // 2. Upload Video File to Cloud Storage if file selected
+        if (selectedVideoFile && isCloudConnected && storage) {
+          videoUrl = await uploadFileToCloudStorage(selectedVideoFile, 'videos', 'Video fayl bulutga yuklanmoqda...');
+        }
+
+        const finalPoster = posterUrl || "https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?auto=format&fit=crop&w=1000&q=85";
+        const finalVideo = videoUrl || SAMPLE_STREAMS[0];
+
+        const payload = {
+          title,
+          category,
+          genres: genresRaw ? genresRaw.split(',').map(s => s.trim()).filter(Boolean) : [category],
+          year,
+          rating,
+          views: 1,
+          likes: 1,
+          featured,
+          isSeries,
+          episodes: isSeries ? epCount : 1,
+          episodeList: isSeries ? [{ title: "1-qism (Premyera)", url: finalVideo }] : [],
+          poster: finalPoster,
+          desc,
+          videoUrl: finalVideo,
+          createdAt: Date.now()
+        };
+
+        if (isCloudConnected && db) {
+          const mediaColRef = collection(db, 'artifacts', appId, 'public', 'data', 'media');
+          await addDoc(mediaColRef, payload);
+          showToast(`"${title}" umumiy bulutli bazaga yuklandi va hamma uchun ochildi!`);
+        } else {
+          mediaList.unshift({ id: 'local-' + Date.now(), ...payload });
+          renderAllUI();
+          showToast(`"${title}" lokal katalogga qo‘shildi!`);
+        }
+
+        // Reset Form
+        selectedPosterFile = null;
+        selectedVideoFile = null;
+        document.getElementById('upload-media-form').reset();
+        document.getElementById('poster-file-name').textContent = "Fayl tanlanmagan";
+        document.getElementById('video-file-name').textContent = "Fayl tanlanmagan";
+        document.getElementById('upload-progress-wrapper').classList.add('hidden');
+        setAdminTab('manage');
+      } catch (err) {
+        console.error("Upload error:", err);
+        showToast("Yuklashda xatolik yuz berdi. URL orqali sinab ko‘ring.", "error");
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('opacity-60');
+      }
+    }
+
+    function updateAdminStats() {
+      document.getElementById('admin-total-count').textContent = mediaList.length;
+      document.getElementById('kpi-media-count').textContent = mediaList.length;
+      const totalViews = mediaList.reduce((acc, m) => acc + (m.views || 0), 0);
+      const totalLikes = mediaList.reduce((acc, m) => acc + (m.likes || 0), 0);
+      document.getElementById('kpi-total-views').textContent = totalViews.toLocaleString();
+      document.getElementById('kpi-total-likes').textContent = totalLikes.toLocaleString();
+      document.getElementById('kpi-cloud-mode').textContent = isCloudConnected ? "Jonli Cloud" : "Lokal";
+    }
+
+    function renderAdminTable() {
+      const tbody = document.getElementById('admin-content-tbody');
+      const query = (document.getElementById('admin-search-input')?.value || '').toLowerCase();
+
+      const rows = mediaList.filter(m => (m.title || '').toLowerCase().includes(query));
+      tbody.innerHTML = rows.map(m => `
+        <tr class="hover:bg-white/5 transition-colors">
+          <td class="py-3 px-3 flex items-center gap-3">
+            <img src="${m.poster}" alt="${m.title}"
+              onerror="this.src='https://placehold.co/80x80/24124d/ffffff?text=MH'"
+              class="w-10 h-10 rounded-xl object-cover shrink-0 border border-white/15" />
+            <div>
+              <div class="font-bold text-white">${m.title}</div>
+              <div class="text-[11px] text-white/50">${m.year} yil ${m.isSeries ? `• ${(m.episodeList?.length || m.episodes || 1)} qism` : ''}</div>
+            </div>
+          </td>
+          <td class="py-3 px-3">
+            <span class="px-2.5 py-1 rounded-full bg-white/10 text-[11px] font-medium">${m.category}</span>
+          </td>
+          <td class="py-3 px-3 text-amber-300 font-semibold">★ ${m.rating}</td>
+          <td class="py-3 px-3 text-white/80">${(m.views || 0).toLocaleString()}</td>
+          <td class="py-3 px-3">
+            <button onclick="toggleFeaturedStatus('${m.id}')"
+              class="px-2.5 py-1 rounded-full text-[11px] font-semibold ${m.featured ? 'bg-emerald-500/25 text-emerald-300 border border-emerald-400/30' : 'bg-white/10 text-white/55'}">
+              ${m.featured ? 'Faol (Hero)' : 'Oddiy'}
+            </button>
+          </td>
+          <td class="py-3 px-3 text-right">
+            <div class="inline-flex items-center gap-1.5">
+              <button onclick="openAddEpisodeModal('${m.id}')" title="Qism qo'shish"
+                class="p-2 rounded-xl bg-amber-500/15 hover:bg-amber-500/40 text-amber-300">
+                <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+              </button>
+              <button onclick="openVideoPlayer('${m.id}')" title="Ko'rish"
+                class="p-2 rounded-xl bg-white/10 hover:bg-indigo-500/40 text-white">
+                <i data-lucide="play" class="w-3.5 h-3.5"></i>
+              </button>
+              <button onclick="deleteMediaItem('${m.id}')" title="O'chirish"
+                class="p-2 rounded-xl bg-rose-500/15 hover:bg-rose-500/40 text-rose-300">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+      lucide.createIcons();
+    }
+
+    function openAddEpisodeModal(mediaId) {
+      const item = mediaList.find(m => m.id === mediaId);
+      if (!item) return;
+      targetEpisodeMediaId = mediaId;
+      document.getElementById('ep-modal-media-title').textContent = `Tanlangan kontent: ${item.title}`;
+      document.getElementById('new-ep-title').value = `${(item.episodeList?.length || 1) + 1}-qism`;
+      document.getElementById('new-ep-url').value = '';
+      const modal = document.getElementById('add-episode-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeAddEpisodeModal() {
+      const modal = document.getElementById('add-episode-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    async function submitNewEpisode(e) {
+      e.preventDefault();
+      if (!targetEpisodeMediaId) return;
+      const item = mediaList.find(m => m.id === targetEpisodeMediaId);
+      if (!item) return;
+
+      const epTitle = document.getElementById('new-ep-title').value.trim();
+      const epUrl = document.getElementById('new-ep-url').value.trim();
+      const currentList = Array.isArray(item.episodeList) && item.episodeList.length > 0
+        ? [...item.episodeList]
+        : [{ title: "1-qism", url: item.videoUrl }];
+
+      currentList.push({ title: epTitle, url: epUrl });
+
+      if (isCloudConnected && db && !item.id.startsWith('local-')) {
+        const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'media', item.id);
+        await updateDoc(docRef, {
+          isSeries: true,
+          episodes: currentList.length,
+          episodeList: currentList
+        });
+      } else {
+        item.isSeries = true;
+        item.episodes = currentList.length;
+        item.episodeList = currentList;
+        renderAllUI();
+      }
+
+      closeAddEpisodeModal();
+      showToast(`"${epTitle}" muvaffaqiyatli qo‘shildi!`);
+    }
+
+    async function toggleFeaturedStatus(id) {
+      const item = mediaList.find(m => m.id === id);
+      if (!item) return;
+      if (isCloudConnected && db && !id.startsWith('local-')) {
+        const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'media', id);
+        await updateDoc(docRef, { featured: !item.featured });
+      } else {
+        item.featured = !item.featured;
+        renderAllUI();
+      }
+      showToast("Hero banner holati yangilandi");
+    }
+
+    async function deleteMediaItem(id) {
+      if (isCloudConnected && db && !id.startsWith('local-')) {
+        const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'media', id);
+        await deleteDoc(docRef);
+      } else {
+        mediaList = mediaList.filter(m => m.id !== id);
+        renderAllUI();
+      }
+      showToast("Kontent barcha foydalanuvchilar uchun o‘chirildi");
+    }
+
+    async function updateSiteAnnouncement() {
+      const text = document.getElementById('setting-announcement-input').value.trim();
+      if (!text) return;
+      if (isCloudConnected && db) {
+        const settingsDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'site_config', 'main');
+        await setDoc(settingsDocRef, { announcement: text }, { merge: true });
+      } else {
+        document.getElementById('announcement-text').textContent = text;
+      }
+      showToast("Jonli e’lon barcha sayt foydalanuvchilariga yuborildi!");
+    }
+
+    async function updateAdminPin() {
+      const newPin = document.getElementById('new-admin-pin-input').value.trim();
+      if (newPin.length < 4) {
+        showToast("PIN kod kamida 4 ta belgidan iborat bo‘lsin", "error");
+        return;
+      }
+      adminPin = newPin;
+      if (isCloudConnected && db) {
+        const settingsDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'site_config', 'main');
+        await setDoc(settingsDocRef, { adminPin: newPin }, { merge: true });
+      }
+      document.getElementById('new-admin-pin-input').value = '';
+      showToast("Admin kirish paroli yangilandi!");
+    }
+
+    function saveCustomFirebaseConfig() {
+      const raw = document.getElementById('custom-firebase-config').value.trim();
+      if (!raw) return;
+      try {
+        JSON.parse(raw);
+        localStorage.setItem('moviehub_custom_firebase_cfg', raw);
+        showToast("Konfiguratsiya saqlandi! Sahifa qayta yuklanmoqda...");
+        setTimeout(() => window.location.reload(), 1000);
+      } catch (e) {
+        showToast("JSON formati noto‘g‘ri! Qayta tekshiring.", "error");
+      }
+    }
+
+    // =========================================================
+    // CHART.JS REAL-TIME ANALYTICS
+    // =========================================================
+    function initAdminCharts() {
+      const viewsCtx = document.getElementById('viewsChart');
+      const catCtx = document.getElementById('categoryChart');
+      if (!viewsCtx || !catCtx) return;
+
+      if (viewsChartInstance) viewsChartInstance.destroy();
+      if (categoryChartInstance) categoryChartInstance.destroy();
+
+      const catViews = {
+        Kino: mediaList.filter(m => m.category === 'Kino').reduce((s, m) => s + (m.views || 0), 0),
+        Drama: mediaList.filter(m => m.category === 'Drama').reduce((s, m) => s + (m.views || 0), 0),
+        Anime: mediaList.filter(m => m.category === 'Anime').reduce((s, m) => s + (m.views || 0), 0),
+        Multfilm: mediaList.filter(m => m.category === 'Multfilm').reduce((s, m) => s + (m.views || 0), 0)
+      };
+
+      viewsChartInstance = new Chart(viewsCtx, {
+        type: 'bar',
+        data: {
+          labels: ['Kino', 'Drama', 'Anime', 'Multfilm'],
+          datasets: [
+            {
+              label: 'Jami Ko‘rishlar Soni',
+              data: [catViews.Kino, catViews.Drama, catViews.Anime, catViews.Multfilm],
+              backgroundColor: [
+                'rgba(255, 75, 92, 0.75)',
+                'rgba(139, 92, 246, 0.75)',
+                'rgba(245, 158, 11, 0.75)',
+                'rgba(16, 185, 129, 0.75)'
+              ],
+              borderRadius: 12
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { labels: { color: '#e2e8f0', font: { size: 11 } } }
+          },
+          scales: {
+            x: { ticks: { color: 'rgba(255,255,255,0.75)' }, grid: { color: 'rgba(255,255,255,0.06)' } },
+            y: { ticks: { color: 'rgba(255,255,255,0.75)' }, grid: { color: 'rgba(255,255,255,0.06)' } }
+          }
+        }
+      });
+
+      const counts = {
+        Kino: mediaList.filter(m => m.category === 'Kino').length,
+        Drama: mediaList.filter(m => m.category === 'Drama').length,
+        Anime: mediaList.filter(m => m.category === 'Anime').length,
+        Multfilm: mediaList.filter(m => m.category === 'Multfilm').length
+      };
+
+      categoryChartInstance = new Chart(catCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Kino', 'Drama', 'Anime', 'Multfilm'],
+          datasets: [{
+            data: [counts.Kino, counts.Drama, counts.Anime, counts.Multfilm],
+            backgroundColor: ['#ff4b5c', '#8b5cf6', '#f59e0b', '#10b981'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '68%',
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { color: '#e2e8f0', padding: 14, font: { size: 11 } }
+            }
+          }
+        }
+      });
+    }
+
+    // Expose functions to global window for inline HTML handlers
+    window.switchMainView = switchMainView;
+    window.requestAdminAccess = requestAdminAccess;
+    window.closeAdminAuthModal = closeAdminAuthModal;
+    window.verifyAdminPin = verifyAdminPin;
+    window.toggleAdminQuick = toggleAdminQuick;
+    window.setCategory = setCategory;
+    window.handleGlobalSearch = handleGlobalSearch;
+    window.resetFilters = resetFilters;
+    window.renderCatalog = renderCatalog;
+    window.nextHeroSlide = nextHeroSlide;
+    window.prevHeroSlide = prevHeroSlide;
+    window.playHeroMedia = playHeroMedia;
+    window.downloadHeroMedia = downloadHeroMedia;
+    window.bookmarkHeroMedia = bookmarkHeroMedia;
+    window.toggleBookmark = toggleBookmark;
+    window.toggleTrailerSort = toggleTrailerSort;
+    window.openVideoPlayer = openVideoPlayer;
+    window.selectEpisode = selectEpisode;
+    window.closeVideoPlayer = closeVideoPlayer;
+    window.changeVideoQuality = changeVideoQuality;
+    window.changePlaybackSpeed = changePlaybackSpeed;
+    window.likeCurrentVideo = likeCurrentVideo;
+    window.bookmarkCurrentVideo = bookmarkCurrentVideo;
+    window.shareCurrentVideo = shareCurrentVideo;
+    window.addPlayerComment = addPlayerComment;
+    window.openNotificationsModal = openNotificationsModal;
+    window.closeNotificationsModal = closeNotificationsModal;
+    window.setAdminTab = setAdminTab;
+    window.toggleSeriesCountInput = toggleSeriesCountInput;
+    window.handlePosterFileSelect = handlePosterFileSelect;
+    window.handleVideoFileSelect = handleVideoFileSelect;
+    window.handleMediaUpload = handleMediaUpload;
+    window.renderAdminTable = renderAdminTable;
+    window.openAddEpisodeModal = openAddEpisodeModal;
+    window.closeAddEpisodeModal = closeAddEpisodeModal;
+    window.submitNewEpisode = submitNewEpisode;
+    window.toggleFeaturedStatus = toggleFeaturedStatus;
+    window.deleteMediaItem = deleteMediaItem;
+    window.updateSiteAnnouncement = updateSiteAnnouncement;
+    window.updateAdminPin = updateAdminPin;
+    window.saveCustomFirebaseConfig = saveCustomFirebaseConfig;
+    window.seedInitialCatalogToCloud = seedInitialCatalogToCloud;
+
+    // Start Application
+    initCloudPlatform();
+  </script>
+</body>
+</html>
